@@ -27,7 +27,7 @@ namespace blank
             auto remote_endpoint = stream_.socket().remote_endpoint();
             auto target = std::make_shared<BlankHttpRequestTarget>();
             target->parse_from_string(req.target().to_string());
-            auto context = std::make_shared<BlankHttpContext>(remote_endpoint, target);
+            auto context = std::make_shared<BlankHttpContext>(remote_endpoint, target, std::ref(yield));
 
             auto handler = router_->get_handler(context);
             auto resp = handler->handle_request(context, std::move(req));

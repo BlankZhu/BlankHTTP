@@ -31,4 +31,9 @@ namespace blank
     {
         return request_target_->get_fragment();
     }
+
+    net::yield_context &BlankHttpContext::get_yield_context()
+    {
+        return yield_;
+    }
 };
