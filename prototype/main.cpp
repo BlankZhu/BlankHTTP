@@ -14,7 +14,7 @@ int main()
     blank::BlankHttpServer server{config};
 
     auto hello_world_handler = std::make_shared<HelloWorldHandler>();
-    server.register_handler("/hello", hello_world_handler, false);
+    server.register_handler("/hello", hello_world_handler);
 
     auto repeator = std::make_shared<HelloUserRepeatMiddleware>();
     std::vector<blank::BlankHttpMiddlewarePtr> repeat_middlwares{repeator};

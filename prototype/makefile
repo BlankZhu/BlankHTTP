@@ -18,7 +18,7 @@ MAIN = blank_server
 
 all:	$(MAIN)
 		@echo Blank HTTP Server has been compiled.
-		$(RM) *.o
+		# $(RM) *.o
 
 $(MAIN):$(OBJS)
 		$(GCC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS) $(BOOST_LIBS)
