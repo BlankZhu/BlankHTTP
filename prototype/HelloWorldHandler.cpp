@@ -9,6 +9,5 @@ blank::Response HelloWorldHandler::handle_get(
     res.set(blank::http::field::content_type, blank::constant::k_mime_txt);
     res.body() = "hello, world";
     res.keep_alive(req.keep_alive());
-    res.prepare_payload();
     return res;
 }

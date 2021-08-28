@@ -90,16 +90,19 @@ namespace blank
             return dfs_get_handler_helper(context, pieces, index + 1, found->second);
         }
 
-        // check if match wildcard
-        found = curr_node->node_map.find(":");
-        if (found != curr_node->node_map.end())
+        // if current piece is not an empty string, check if match wildcard
+        if (pieces[index].length() != 0)
         {
-            auto ret = dfs_get_handler_helper(context, pieces, index + 1, found->second);
-            if (ret != nullptr)
+            found = curr_node->node_map.find(":");
+            if (found != curr_node->node_map.end())
             {
-                context->set_param(found->second->wildcard.key, piece);
+                auto ret = dfs_get_handler_helper(context, pieces, index + 1, found->second);
+                if (ret != nullptr)
+                {
+                    context->set_param(found->second->wildcard.key, piece);
+                }
+                return ret;
             }
-            return ret;
         }
 
         // not found, and index still doesn't reach
