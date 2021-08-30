@@ -6,9 +6,9 @@ LFLAGS = -L/usr/local/lib
 LIBS = -lpthread -lssl -lcrypto
 BOOST_LIBS = -D -lboost_system -lboost_context -lboost_coroutine -lboost_thread -lboost_json -lboost_log_setup -lboost_log
 
-SRCS = main.cpp BlankHttpConfig.cpp BlankHttpContext.cpp BlankHttpDefaultMiddleware.cpp BlankHttpHandleChain.cpp BlankHttpHandler.cpp \
+SRCS = main.cpp BlankHttpClient.cpp BlankHttpConfig.cpp BlankHttpContext.cpp BlankHttpDefaultMiddleware.cpp BlankHttpHandleChain.cpp BlankHttpHandler.cpp \
 	   BlankHttpLogger.cpp BlankHttpMiddleware.cpp BlankHttpRequestTarget.cpp BlankHttpRouter.cpp BlankHttpRouteTable.cpp BlankHttpServer.cpp \
-	   BlankHttpSession.cpp HelloUserHandler.cpp HelloUserRepeatMiddleware.cpp HelloWorldHandler.cpp
+	   BlankHttpSession.cpp HelloUserHandler.cpp HelloUserRepeatMiddleware.cpp HelloWorldHandler.cpp BingMainPageHandler.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

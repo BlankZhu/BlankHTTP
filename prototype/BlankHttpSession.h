@@ -20,7 +20,6 @@ namespace blank
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
 
-    using Response = http::response<http::string_body>;
     using Request = http::request<http::string_body>;
 
     class BlankHttpSession : public std::enable_shared_from_this<BlankHttpSession>

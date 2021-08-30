@@ -8,6 +8,7 @@
 
 namespace blank
 {
+    namespace beast = boost::beast;
     namespace http = boost::beast::http;
 
     using Response = http::response<http::string_body>;

@@ -18,7 +18,7 @@ namespace blank
             }
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session read request, detail: " << ec.message();
+                BOOST_LOG_TRIVIAL(error) << "HTTP session read request error, detail: " << ec.message();
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace blank
             auto remote_endpoint = stream_.socket().remote_endpoint();
             auto target = std::make_shared<BlankHttpRequestTarget>();
             target->parse_from_string(req.target().to_string());
-            auto context = std::make_shared<BlankHttpContext>(remote_endpoint, target, std::ref(yield));
+            auto context = std::make_shared<BlankHttpContext>(remote_endpoint, target, stream_.socket().get_executor(), std::ref(yield));
 
             auto handler = router_->get_handler(context);
             auto resp = handler->handle_request(context, std::move(req));
@@ -38,7 +38,7 @@ namespace blank
             http::async_write(stream_, resp, yield[ec]);
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session write response, detail: " << ec.message();
+                BOOST_LOG_TRIVIAL(error) << "HTTP session write response error, detail: " << ec.message();
                 return;
             }
             if (http_connection_closed)

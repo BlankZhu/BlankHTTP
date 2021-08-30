@@ -3,6 +3,7 @@
 #include "BlankHttpMiddleware.h"
 #include "BlankHttpServer.h"
 
+#include "BingMainPageHandler.h"
 #include "HelloUserHandler.h"
 #include "HelloUserRepeatMiddleware.h"
 #include "HelloWorldHandler.h"
@@ -15,6 +16,9 @@ int main()
 
     auto hello_world_handler = std::make_shared<HelloWorldHandler>();
     server.register_handler("/hello", hello_world_handler);
+
+    auto bing_main_page_hander = std::make_shared<BingMainPageHandler>();
+    server.register_handler("/bing", bing_main_page_hander);
 
     auto repeator = std::make_shared<HelloUserRepeatMiddleware>();
     std::vector<blank::BlankHttpMiddlewarePtr> repeat_middlwares{repeator};

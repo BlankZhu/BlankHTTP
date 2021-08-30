@@ -32,6 +32,11 @@ namespace blank
         return request_target_->get_fragment();
     }
 
+    net::any_io_executor BlankHttpContext::get_executor()
+    {
+        return executor_;
+    }
+
     net::yield_context &BlankHttpContext::get_yield_context()
     {
         return yield_;
