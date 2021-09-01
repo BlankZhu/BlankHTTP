@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/beast/http.hpp>
 
 #include "BlankHttpContext.h"
 #include "BlankHttpHandler.h"
@@ -13,9 +14,10 @@
 namespace blank
 {
     class BlankHttpRouteTable;
-    using BlankHttpRouteTablePtr = std::shared_ptr<BlankHttpRouteTable>;
+    using BlankHttpRouteTableIIPtr = std::shared_ptr<BlankHttpRouteTable>;
     class BlankHttpRouteNode;
     using BlankHttpRouteNodePtr = std::shared_ptr<BlankHttpRouteNode>;
+    namespace http = boost::beast::http;
 
     struct Wildcard
     {
@@ -33,7 +35,7 @@ namespace blank
 
     public:
         BlankHttpHandlerPtr get_handler(BlankHttpContextPtr context) const;
-        void add_handler(const std::string &path, BlankHttpHandlerPtr handler);
+        void add_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler);
 
     private:
         BlankHttpHandlerPtr dfs_get_handler_helper(
@@ -50,11 +52,11 @@ namespace blank
     struct BlankHttpRouteNode
     {
     public:
-        BlankHttpRouteNode() : handler(nullptr){};
+        BlankHttpRouteNode() = default;
         ~BlankHttpRouteNode() = default;
 
     public:
-        BlankHttpHandlerPtr handler;
+        std::unordered_map<int, BlankHttpHandlerPtr> handler_map;
         bool is_wildcard;
         Wildcard wildcard;
         std::unordered_map<std::string, BlankHttpRouteNodePtr> node_map;

@@ -3,6 +3,8 @@
 #include <memory>
 #include <shared_mutex>
 
+#include <boost/beast/http.hpp>
+
 #include "BlankHttpContext.h"
 #include "BlankHttpHandler.h"
 #include "BlankHttpHandleChain.h"
@@ -10,6 +12,8 @@
 
 namespace blank
 {
+    namespace http = boost::beast::http;
+
     class BlankHttpRouter
     {
     public:
@@ -17,7 +21,7 @@ namespace blank
         ~BlankHttpRouter() = default;
 
     public:
-        void add_handler(const std::string &path, BlankHttpHandlerPtr handler);
+        void add_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler);
         BlankHttpHandlerPtr get_handler(BlankHttpContextPtr context) const;
 
     private:

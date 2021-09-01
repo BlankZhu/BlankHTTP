@@ -2,7 +2,7 @@
 
 namespace blank
 {
-    void BlankHttpRouteTable::add_handler(const std::string &path, BlankHttpHandlerPtr handler)
+    void BlankHttpRouteTable::add_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler)
     {
         auto tmp_path = add_leading_slash(path);
         std::vector<std::string> pieces{};
@@ -54,7 +54,9 @@ namespace blank
             curr->node_map.insert_or_assign("", tail_node);
             curr = tail_node;
         }
-        curr->handler = handler;
+        
+        int method_int = static_cast<int>(method);
+        curr->handler_map[method_int] = handler;
     }
 
     BlankHttpHandlerPtr BlankHttpRouteTable::get_handler(BlankHttpContextPtr context) const
@@ -79,7 +81,14 @@ namespace blank
         }
         if (index >= pieces.size())
         {
-            return curr_node->handler;
+            // return curr_node->handler;
+            auto method_int = static_cast<int>(context->get_method());
+            auto ret = curr_node->handler_map.find(method_int);
+            if (ret == curr_node->handler_map.end())
+            {
+                return nullptr;
+            }
+            return ret->second;
         }
 
         const auto &piece = pieces[index];

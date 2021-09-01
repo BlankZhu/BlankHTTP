@@ -14,17 +14,17 @@ int main()
     config.calibrate();
     blank::BlankHttpServer server{config};
 
-    auto hello_world_handler = std::make_shared<HelloWorldHandler>();
-    server.register_handler("/hello", hello_world_handler);
+    // auto hello_world_handler = std::make_shared<HelloWorldHandler>();
+    // server.register_handler("/hello", hello_world_handler);
 
-    auto bing_main_page_hander = std::make_shared<BingMainPageHandler>();
-    server.register_handler("/bing", bing_main_page_hander);
+    // auto bing_main_page_hander = std::make_shared<BingMainPageHandler>();
+    // server.register_handler("/bing", bing_main_page_hander);
 
-    auto repeator = std::make_shared<HelloUserRepeatMiddleware>();
-    std::vector<blank::BlankHttpMiddlewarePtr> repeat_middlwares{repeator};
-    auto hello_user_handler = std::make_shared<HelloUserHandler>();
-    auto repeat_user_chain = std::make_shared<blank::BlankHttpHandleChain>(repeat_middlwares, hello_user_handler);
-    server.register_chain("/hello/:user", repeat_user_chain);
+    // auto repeator = std::make_shared<HelloUserRepeatMiddleware>();
+    // std::vector<blank::BlankHttpMiddlewarePtr> repeat_middlwares{repeator};
+    // auto hello_user_handler = std::make_shared<HelloUserHandler>();
+    // auto repeat_user_chain = std::make_shared<blank::BlankHttpHandleChain>(repeat_middlwares, hello_user_handler);
+    // server.register_chain("/hello/:user", repeat_user_chain);
 
     server.run();
 }

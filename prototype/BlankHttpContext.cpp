@@ -32,6 +32,11 @@ namespace blank
         return request_target_->get_fragment();
     }
 
+    http::verb BlankHttpContext::get_method() const
+    {
+        return request_method_;
+    }
+
     net::any_io_executor BlankHttpContext::get_executor()
     {
         return executor_;

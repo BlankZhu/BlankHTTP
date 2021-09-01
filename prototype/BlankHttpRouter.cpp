@@ -2,10 +2,10 @@
 
 namespace blank
 {
-    void BlankHttpRouter::add_handler(const std::string& path, BlankHttpHandlerPtr handler)
+    void BlankHttpRouter::add_handler(const std::string& path, const http::verb &method, BlankHttpHandlerPtr handler)
     {
         std::unique_lock lock{mutex_};
-        table_.add_handler(path, handler);
+        table_.add_handler(path, method, handler);
     }
 
     BlankHttpHandlerPtr BlankHttpRouter::get_handler(BlankHttpContextPtr context) const
