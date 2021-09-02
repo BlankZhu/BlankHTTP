@@ -7,6 +7,7 @@
 #include "BlankHttpDefaultMiddleware.h"
 #include "BlankHttpHandler.h"
 #include "BlankHttpMiddleware.h"
+#include "BlankHttpResponse.h"
 
 namespace blank
 {
@@ -19,7 +20,7 @@ namespace blank
         virtual ~BlankHttpHandleChain() = default;
 
     public:
-        virtual Response handle_request(BlankHttpContextPtr context, Request &&request);
+        virtual BlankHttpResponse handle_request(BlankHttpContextPtr context, Request &&request);
 
     private:
         BlankHttpHandlerPtr handler_;

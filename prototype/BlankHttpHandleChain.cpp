@@ -48,7 +48,7 @@ namespace blank
         (*p2)->set_next(handler_);
     }
 
-    Response BlankHttpHandleChain::handle_request(BlankHttpContextPtr context, Request &&request)
+    BlankHttpResponse BlankHttpHandleChain::handle_request(BlankHttpContextPtr context, Request &&request)
     {
         if (middlewares_.empty())
         {

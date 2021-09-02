@@ -14,8 +14,6 @@ namespace blank
     namespace http = boost::beast::http;
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
-    // using Request = http::request<http::string_body>;
-    // using Response = http::response<http::string_body>;
 
     class BlankHttpClient
     {

@@ -2,6 +2,7 @@
 
 #include "BlankHttpConstant.h"
 #include "BlankHttpHandler.h"
+#include "BlankHttpResponse.h"
 
 class HelloWorldHandler : public blank::BlankHttpHandler
 {
@@ -10,5 +11,5 @@ public:
     virtual ~HelloWorldHandler() = default;
 
 public:
-    virtual blank::Response handle_get(blank::BlankHttpContextPtr ctx, blank::Request &&req);
+    virtual blank::BlankHttpResponse handle_get(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

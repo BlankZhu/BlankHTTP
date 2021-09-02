@@ -12,5 +12,5 @@ public:
     virtual ~HelloUserHandler() = default;
 
 public:
-    virtual blank::Response handle_get(blank::BlankHttpContextPtr ctx, blank::Request &&req);
+    virtual blank::BlankHttpResponse handle_get(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

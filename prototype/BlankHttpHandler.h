@@ -5,13 +5,13 @@
 
 #include "BlankHttpContext.h"
 #include "BlankHttpConstant.h"
+#include "BlankHttpResponse.h"
 
 namespace blank
 {
     namespace beast = boost::beast;
     namespace http = boost::beast::http;
 
-    using Response = http::response<http::string_body>;
     using Request = http::request<http::string_body>;
 
     class BlankHttpHandler
@@ -21,18 +21,10 @@ namespace blank
         virtual ~BlankHttpHandler() = default;
 
     public:
-        virtual Response handle_request(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_delete(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_get(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_head(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_post(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_put(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_connect(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_options(BlankHttpContextPtr ctx, Request &&req);
-        virtual Response handle_trace(BlankHttpContextPtr ctx, Request &&req);
+        virtual BlankHttpResponse handle_request(BlankHttpContextPtr ctx, Request &&req);
 
     private:
-        Response base_not_found(BlankHttpContextPtr ctx, Request &&req);
+        BlankHttpResponse base_not_found(BlankHttpContextPtr ctx, Request &&req);
     };
 
     using BlankHttpHandlerPtr = std::shared_ptr<BlankHttpHandler>;

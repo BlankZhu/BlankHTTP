@@ -5,6 +5,7 @@
 #include "BlankHttpHandler.h"
 #include "BlankHttpLogger.h"
 #include "BlankHttpMiddleware.h"
+#include "BlankHttpResponse.h"
 
 namespace blank
 {
@@ -15,6 +16,6 @@ namespace blank
         virtual ~BlankHttpDefaultMiddleware() = default;
 
     public:
-        virtual Response handle_request(BlankHttpContextPtr ctx, Request &&req);
+        virtual BlankHttpResponse handle_request(BlankHttpContextPtr ctx, Request &&req);
     };
 };

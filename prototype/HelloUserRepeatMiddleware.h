@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "BlankHttpMiddleware.h"
+#include "BlankHttpResponse.h"
 
 class HelloUserRepeatMiddleware : public blank::BlankHttpMiddleware
 {
@@ -11,5 +12,5 @@ public:
     virtual ~HelloUserRepeatMiddleware() = default;
 
 public:
-    virtual blank::Response handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
+    virtual blank::BlankHttpResponse handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

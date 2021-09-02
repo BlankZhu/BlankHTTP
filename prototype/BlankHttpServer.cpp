@@ -30,20 +30,20 @@ namespace blank
         ioc.run();
     }
 
-    void BlankHttpServer::register_handler(const std::string &path, BlankHttpHandlerPtr handler, bool enable_default_middlewares)
+    void BlankHttpServer::register_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler, bool enable_default_middlewares)
     {
         if (enable_default_middlewares)
         {
             auto chain = std::make_shared<BlankHttpHandleChain>(handler, true);
-            router_->add_handler(path, chain);
+            router_->add_handler(path, method, chain);
             return;
         }
-        router_->add_handler(path, handler);
+        router_->add_handler(path, method, handler);
     }
 
-    void BlankHttpServer::register_chain(const std::string &path, BlankHttpHandleChainPtr chain)
+    void BlankHttpServer::register_chain(const std::string &path, const http::verb &method, BlankHttpHandleChainPtr chain)
     {
-        router_->add_handler(path, chain);
+        router_->add_handler(path, method, chain);
     }
 
     void BlankHttpServer::setup_logger()

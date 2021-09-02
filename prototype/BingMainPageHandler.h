@@ -11,5 +11,5 @@ public:
     virtual ~BingMainPageHandler() = default;
 
 public:
-    virtual blank::Response handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
+    virtual blank::BlankHttpResponse handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

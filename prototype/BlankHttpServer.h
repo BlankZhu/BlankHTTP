@@ -31,8 +31,8 @@ namespace blank
 
     public:
         void run();
-        void register_handler(const std::string &path, BlankHttpHandlerPtr handler, bool enable_default_middlewares = true);
-        void register_chain(const std::string &path, BlankHttpHandleChainPtr handle_chain);
+        void register_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler, bool enable_default_middlewares = true);
+        void register_chain(const std::string &path, const http::verb &method, BlankHttpHandleChainPtr handle_chain);
 
     private:
         void setup_logger();

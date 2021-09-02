@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "BlankHttpHandler.h"
+#include "BlankHttpResponse.h"
 
 namespace blank
 {
@@ -12,15 +13,15 @@ namespace blank
     class BlankHttpMiddleware : public BlankHttpHandler
     {
     public:
-        BlankHttpMiddleware() : BlankHttpHandler(), next_(nullptr) {};
+        BlankHttpMiddleware() : BlankHttpHandler(), next_(nullptr){};
         virtual ~BlankHttpMiddleware() = default;
 
     public:
-        virtual Response handle_request(BlankHttpContextPtr ctx, Request &&req);
+        virtual BlankHttpResponse handle_request(BlankHttpContextPtr ctx, Request &&req);
         void set_next(BlankHttpHandlerPtr next);
 
     protected:
-        Response next(BlankHttpContextPtr ctx, Request &&req);
+        BlankHttpResponse next(BlankHttpContextPtr ctx, Request &&req);
 
     private:
         BlankHttpHandlerPtr next_;

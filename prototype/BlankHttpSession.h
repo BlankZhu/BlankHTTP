@@ -35,6 +35,10 @@ namespace blank
         void handle_session(net::yield_context yield);
 
     private:
+        bool write_string_response(BlankHttpResponse resp, net::yield_context &yield, beast::error_code &ec);
+        bool write_file_response(BlankHttpResponse resp, net::yield_context &yield, beast::error_code &ec);
+
+    private:
         beast::tcp_stream stream_;
         const BlankHttpRouterPtr router_;
         std::chrono::seconds timeout_;
