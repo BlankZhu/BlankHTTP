@@ -11,5 +11,5 @@ public:
     virtual ~HelloWorldHandler() = default;
 
 public:
-    virtual blank::BlankHttpResponse handle_get(blank::BlankHttpContextPtr ctx, blank::Request &&req);
+    virtual blank::BlankHttpResponse handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

@@ -1,6 +1,6 @@
 #include "HelloWorldHandler.h"
 
-blank::BlankHttpResponse HelloWorldHandler::handle_get(
+blank::BlankHttpResponse HelloWorldHandler::handle_request(
     blank::BlankHttpContextPtr ctx, 
     blank::Request &&req)
 {

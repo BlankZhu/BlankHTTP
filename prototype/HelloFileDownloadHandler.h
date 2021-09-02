@@ -1,16 +1,14 @@
 #pragma once
 
-#include <sstream>
-
 #include "BlankHttpHandler.h"
 #include "BlankHttpConstant.h"
 
-class HelloUserHandler : public blank::BlankHttpHandler
+class HelloFileDownloadHandler : public blank::BlankHttpHandler
 {
 public:
-    HelloUserHandler() : BlankHttpHandler() {}
-    virtual ~HelloUserHandler() = default;
+    HelloFileDownloadHandler() :  BlankHttpHandler() {}
+    virtual ~HelloFileDownloadHandler() = default;
 
-public:
+private:
     virtual blank::BlankHttpResponse handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);
 };

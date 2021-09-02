@@ -1,6 +1,6 @@
 #include "HelloUserHandler.h"
 
-blank::BlankHttpResponse HelloUserHandler::handle_get(
+blank::BlankHttpResponse HelloUserHandler::handle_request(
     blank::BlankHttpContextPtr ctx,
     blank::Request &&req)
 {
@@ -14,7 +14,7 @@ blank::BlankHttpResponse HelloUserHandler::handle_get(
     std::stringstream ss{};
     ss << "Hello, " << ctx->get_param("user") << "\n";
     res->body() = ss.str();
-
+    
     res->keep_alive(req.keep_alive());
     return BlankHttpResponse{res};
 }
