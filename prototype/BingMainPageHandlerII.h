@@ -1,14 +1,14 @@
 #pragma once
 
-#include "BlankHttpClient.hpp"
 #include "BlankHttpConstant.h"
 #include "BlankHttpHandler.h"
+#include "BlankHttpsClient.hpp"
 
-class BingMainPageHandler : public blank::BlankHttpHandler
+class BingMainPageHandlerII : public blank::BlankHttpHandler
 {
 public:
-    BingMainPageHandler() : blank::BlankHttpHandler() {}
-    virtual ~BingMainPageHandler() = default;
+    BingMainPageHandlerII() : blank::BlankHttpHandler() {}
+    virtual ~BingMainPageHandlerII() = default;
 
 public:
     virtual blank::BlankHttpResponse handle_request(blank::BlankHttpContextPtr ctx, blank::Request &&req);

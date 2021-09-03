@@ -110,6 +110,13 @@ namespace blank
                 }
             }
 
+            http::response<http::file_body> response;
+            response.body().open(save_path.c_str(), beast::file_mode::write, ec);
+            if (ec)
+            {
+                return;
+            }
+
             stream_.expires_after(timeout_);
             http::async_write(stream_, request, yield[ec]);
             if (ec)
@@ -118,13 +125,6 @@ namespace blank
             }
 
             beast::flat_buffer buffer;
-            http::response<http::file_body> response;
-            response.body().open(save_path.c_str(), beast::file_mode::write, ec);
-            if (ec)
-            {
-                return;
-            }
-
             http::async_read(stream_, buffer, response, yield[ec]);
             if (ec)
             {

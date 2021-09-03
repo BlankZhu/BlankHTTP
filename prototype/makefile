@@ -8,8 +8,8 @@ BOOST_LIBS = -D -lboost_system -lboost_context -lboost_coroutine -lboost_thread 
 
 SRCS = BlankHttpConfig.cpp BlankHttpContext.cpp BlankHttpDefaultMiddleware.cpp BlankHttpHandleChain.cpp BlankHttpHandler.cpp BlankHttpLogger.cpp \
 	   BlankHttpMiddleware.cpp BlankHttpRequestTarget.cpp BlankHttpResponse.cpp BlankHttpRouter.cpp BlankHttpRouteTable.cpp BlankHttpServer.cpp \
-	   BlankHttpSession.cpp HelloUserHandler.cpp HelloFileDownloadHandler.cpp HelloUserRepeatMiddleware.cpp HelloWorldHandler.cpp BingMainPageHandler.cpp \
-	   main.cpp
+	   BlankHttpSession.cpp HelloUserHandler.cpp HelloFileDownloadHandler.cpp HelloUserRepeatMiddleware.cpp HelloWorldHandler.cpp \
+	   BingMainPageHandler.cpp BingMainPageHandlerII.cpp main.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
