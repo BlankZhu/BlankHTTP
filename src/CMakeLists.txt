@@ -33,5 +33,5 @@ set (BLANK_HTTP_HEADERS
     BlankHttpSession.h
 )
 
-install(TARGETS blankhttp DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${BLANK_HTTP_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(TARGETS blankhttp DESTINATION lib)
+install(FILES ${BLANK_HTTP_HEADERS} DESTINATION include/blankhttp)
