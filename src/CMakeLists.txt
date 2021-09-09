@@ -1,4 +1,5 @@
 add_library(blankhttp SHARED
+    BlankHttpConfig.cpp
     BlankHttpContext.cpp
     BlankHttpDefaultMiddleware.cpp
     BlankHttpHandleChain.cpp

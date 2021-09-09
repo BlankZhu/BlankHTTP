@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # check dependencies
-find_package(Boost 1.75.0 REQUIRED COMPONENTS atomic chrono context coroutine log log_setup thread)
+find_package(Boost 1.75.0 REQUIRED COMPONENTS atomic chrono context coroutine log log_setup json thread)
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 
