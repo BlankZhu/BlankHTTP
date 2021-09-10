@@ -12,6 +12,7 @@ add_library(blankhttp SHARED
     BlankHttpRouteTable.cpp
     BlankHttpServer.cpp
     BlankHttpSession.cpp
+    BlankHttpUtility.cpp
 )
 
 set (BLANK_HTTP_HEADERS
@@ -31,6 +32,7 @@ set (BLANK_HTTP_HEADERS
     BlankHttpsClient.hpp
     BlankHttpServer.h
     BlankHttpSession.h
+    BlankHttpUtility.h
 )
 
 install(TARGETS blankhttp DESTINATION lib)
