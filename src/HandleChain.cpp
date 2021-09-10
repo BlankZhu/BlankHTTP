@@ -1,32 +1,32 @@
-#include "BlankHttpHandleChain.h"
+#include "HandleChain.h"
 
 namespace blank
 {
-    BlankHttpHandleChain::BlankHttpHandleChain() : BlankHttpHandleChain(std::make_shared<BlankHttpHandler>(), true)
+    HandleChain::HandleChain() : HandleChain(std::make_shared<Handler>(), true)
     {
     }
 
-    BlankHttpHandleChain::BlankHttpHandleChain(BlankHttpHandlerPtr handler, bool use_default)
-        : BlankHttpHandler()
+    HandleChain::HandleChain(HandlerPtr handler, bool use_default)
+        : Handler()
     {
         handler_ = handler;
         if (use_default)
         {
-            auto default_middleware = std::make_shared<BlankHttpDefaultMiddleware>();
+            auto default_middleware = std::make_shared<DefaultMiddleware>();
             default_middleware->set_next(handler_);
             middlewares_.push_back(default_middleware);
         }
     }
 
-    BlankHttpHandleChain::BlankHttpHandleChain(
-        std::vector<BlankHttpMiddlewarePtr> middlewares,
-        BlankHttpHandlerPtr handler,
+    HandleChain::HandleChain(
+        std::vector<MiddlewarePtr> middlewares,
+        HandlerPtr handler,
         bool use_default)
-        : BlankHttpHandler()
+        : Handler()
     {
         if (use_default)
         {
-            auto default_middleware = std::make_shared<BlankHttpDefaultMiddleware>();
+            auto default_middleware = std::make_shared<DefaultMiddleware>();
             middlewares_.push_back(default_middleware);
         }
 
@@ -48,7 +48,7 @@ namespace blank
         (*p2)->set_next(handler_);
     }
 
-    BlankHttpResponse BlankHttpHandleChain::handle_request(BlankHttpContextPtr context, Request &&request)
+    Response HandleChain::handle_request(ContextPtr context, Request &&request)
     {
         if (middlewares_.empty())
         {

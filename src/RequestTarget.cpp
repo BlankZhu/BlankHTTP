@@ -1,8 +1,8 @@
-#include "BlankHttpRequestTarget.h"
+#include "RequestTarget.h"
 
 namespace blank
 {
-    void BlankHttpRequestTarget::parse_from_string(const std::string &target)
+    void RequestTarget::parse_from_string(const std::string &target)
     {
         auto path = extract_path_from_target(target);
         path_ = path;
@@ -14,12 +14,12 @@ namespace blank
         fragment_ = fragment;
     }
 
-    std::string BlankHttpRequestTarget::get_path() const
+    std::string RequestTarget::get_path() const
     {
         return path_;
     }
 
-    std::vector<std::string> BlankHttpRequestTarget::get_query(const std::string &key) const
+    std::vector<std::string> RequestTarget::get_query(const std::string &key) const
     {
         auto found = query_.find(key);
         if (found == query_.end())
@@ -29,12 +29,12 @@ namespace blank
         return found->second;
     }
 
-    std::string BlankHttpRequestTarget::get_fragment() const
+    std::string RequestTarget::get_fragment() const
     {
         return fragment_;
     }
 
-    std::string BlankHttpRequestTarget::extract_path_from_target(const std::string &target) const
+    std::string RequestTarget::extract_path_from_target(const std::string &target) const
     {
         std::vector<std::string> splited{};
         boost::split(splited, target, boost::is_any_of("?"));
@@ -45,7 +45,7 @@ namespace blank
         return "";
     }
 
-    std::string BlankHttpRequestTarget::extract_query_from_target(const std::string &target) const
+    std::string RequestTarget::extract_query_from_target(const std::string &target) const
     {
         // find question mark
         auto question_pos = target.find_first_of('?');
@@ -69,7 +69,7 @@ namespace blank
         return target.substr(question_pos, sharp_pos - question_pos);
     }
 
-    std::string BlankHttpRequestTarget::extract_fragment_from_target(const std::string &target) const
+    std::string RequestTarget::extract_fragment_from_target(const std::string &target) const
     {
         std::vector<std::string> splited{};
         boost::split(splited, target, boost::is_any_of("#"));
@@ -80,7 +80,7 @@ namespace blank
         return "";
     }
 
-    void BlankHttpRequestTarget::parse_querys(const std::string &query, Query &ret)
+    void RequestTarget::parse_querys(const std::string &query, Query &ret)
     {
         std::vector<std::string> splited{};
         boost::split(splited, query, boost::is_any_of("&"));

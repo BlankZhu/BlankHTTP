@@ -1,8 +1,8 @@
-#include "BlankHttpClient.hpp"
+#include "Client.hpp"
 
 namespace blank
 {
-    BlankHttpClient::~BlankHttpClient()
+    Client::~Client()
     {
         if (is_connected_)
         {
@@ -11,7 +11,7 @@ namespace blank
         }
     }
 
-    void BlankHttpClient::Connect(net::yield_context &yield, beast::error_code &ec)
+    void Client::Connect(net::yield_context &yield, beast::error_code &ec)
     {
         if (is_connected_)
         {
@@ -34,7 +34,7 @@ namespace blank
         is_connected_ = true;
     }
 
-    void BlankHttpClient::Shutdown(beast::error_code &ec)
+    void Client::Shutdown(beast::error_code &ec)
     {
         if (is_connected_)
         {
@@ -45,7 +45,7 @@ namespace blank
     }
 
     template <class Body, class Fields>
-    void BlankHttpClient::DoRequest(const http::message<true, Body, Fields> &request,
+    void Client::DoRequest(const http::message<true, Body, Fields> &request,
                                     http::message<false, Body, Fields> &response,
                                     net::yield_context &yield, beast::error_code &ec)
     {
@@ -74,7 +74,7 @@ namespace blank
     }
 
     template <class Body, class Fields>
-    void BlankHttpClient::Download(const http::message<true, Body, Fields> &request,
+    void Client::Download(const http::message<true, Body, Fields> &request,
                                    const std::string &save_path,
                                    net::yield_context &yield, beast::error_code &ec)
     {

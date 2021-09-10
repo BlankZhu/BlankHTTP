@@ -8,7 +8,7 @@
 
 namespace blank
 {
-    struct BlankHttpConfig
+    struct Config
     {
     public:
         void calibrate();

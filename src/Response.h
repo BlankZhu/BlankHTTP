@@ -13,12 +13,12 @@ namespace blank
     using StringResponsePtr = std::shared_ptr<http::response<http::string_body>>;
     using FileResponsePtr = std::shared_ptr<http::response<http::file_body>>;
 
-    class BlankHttpResponse
+    class Response
     {
     public:
-        BlankHttpResponse(StringResponsePtr resp) : is_string_response_(true), is_file_response_(false), string_response_(resp), file_response_(nullptr) {}
-        BlankHttpResponse(FileResponsePtr resp) : is_string_response_(false), is_file_response_(true), string_response_(nullptr), file_response_(resp) {}
-        ~BlankHttpResponse() = default;
+        Response(StringResponsePtr resp) : is_string_response_(true), is_file_response_(false), string_response_(resp), file_response_(nullptr) {}
+        Response(FileResponsePtr resp) : is_string_response_(false), is_file_response_(true), string_response_(nullptr), file_response_(resp) {}
+        ~Response() = default;
 
     public:
         StringResponsePtr get_string_response() const;

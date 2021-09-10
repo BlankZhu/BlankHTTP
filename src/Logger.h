@@ -6,7 +6,7 @@
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-#include "BlankHttpConstant.h"
+#include "Constant.h"
 
 namespace blank
 {
@@ -15,7 +15,7 @@ namespace blank
     namespace keywords = boost::log::keywords;
     namespace attrs = boost::log::attributes;
 
-    class BlankHttpLogger
+    class Logger
     {
     public:
         // static void init(trivial::severity_level log_level = trivial::trace);

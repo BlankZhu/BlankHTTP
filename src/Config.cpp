@@ -1,8 +1,8 @@
-#include "BlankHttpConfig.h"
+#include "Config.h"
 
 namespace blank
 {
-    void BlankHttpConfig::calibrate()
+    void Config::calibrate()
     {
         if (address.empty())
         {
@@ -30,7 +30,7 @@ namespace blank
         }
     }
 
-    std::string BlankHttpConfig::to_readable_string() const
+    std::string Config::to_readable_string() const
     {
         std::stringstream ss;
         ss << "serving at: [" << address << ":" << port << "], "
@@ -40,7 +40,7 @@ namespace blank
         return ss.str();
     }
 
-    std::string BlankHttpConfig::to_json_string() const
+    std::string Config::to_json_string() const
     {
         namespace json = boost::json;
         json::object obj{};

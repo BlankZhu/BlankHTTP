@@ -1,8 +1,8 @@
-#include "BlankHttpResponse.h"
+#include "Response.h"
 
 namespace blank
 {
-    StringResponsePtr BlankHttpResponse::get_string_response() const
+    StringResponsePtr Response::get_string_response() const
     {
         if (is_string_response_)
         {
@@ -10,14 +10,14 @@ namespace blank
         }
         return nullptr;
     }
-    void BlankHttpResponse::set_string_response(StringResponsePtr resp)
+    void Response::set_string_response(StringResponsePtr resp)
     {
         string_response_ = resp;
         is_string_response_ = true;
         file_response_ = nullptr;
         is_file_response_ = false;
     }
-    FileResponsePtr BlankHttpResponse::get_file_response() const
+    FileResponsePtr Response::get_file_response() const
     {
         if (is_file_response_)
         {
@@ -25,7 +25,7 @@ namespace blank
         }
         return nullptr;
     }
-    void BlankHttpResponse::set_file_response(FileResponsePtr resp)
+    void Response::set_file_response(FileResponsePtr resp)
     {
         file_response_ = resp;
         is_file_response_ = true;
@@ -33,17 +33,17 @@ namespace blank
         is_string_response_ = false;
     }
 
-    bool BlankHttpResponse::is_string_response() const
+    bool Response::is_string_response() const
     {
         return is_string_response_;
     }
 
-    bool BlankHttpResponse::is_file_response() const
+    bool Response::is_file_response() const
     {
         return is_file_response_;
     }
 
-    void BlankHttpResponse::prepare_payload()
+    void Response::prepare_payload()
     {
         if (file_response_ != nullptr)
         {
@@ -57,7 +57,7 @@ namespace blank
         }
     }
 
-    unsigned BlankHttpResponse::get_status_code() const
+    unsigned Response::get_status_code() const
     {
         if (file_response_ != nullptr)
         {

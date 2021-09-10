@@ -15,15 +15,15 @@ namespace blank
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
 
-    class BlankHttpClient
+    class Client
     {
     public:
-        BlankHttpClient(const std::string &host, const std::string &port,
+        Client(const std::string &host, const std::string &port,
                         const std::chrono::seconds &timeout, net::any_io_executor executor)
             : host_(host), port_(port), timeout_(timeout), is_connected_(false),
               resolver_(executor), stream_(executor) {}
-        BlankHttpClient(BlankHttpClient &&) = default;
-        ~BlankHttpClient();
+        Client(Client &&) = default;
+        ~Client();
 
     public:
         void Connect(net::yield_context &yield, beast::error_code &ec);

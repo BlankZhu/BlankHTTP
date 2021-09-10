@@ -11,12 +11,12 @@ namespace blank
 {
     using Query = std::unordered_map<std::string, std::vector<std::string>>;
 
-    // BlankHttp
-    class BlankHttpRequestTarget
+    // 
+    class RequestTarget
     {
     public:
-        BlankHttpRequestTarget() = default;
-        ~BlankHttpRequestTarget() = default;
+        RequestTarget() = default;
+        ~RequestTarget() = default;
 
     public:
         void parse_from_string(const std::string &target);
@@ -36,5 +36,5 @@ namespace blank
         std::string fragment_;
     };
 
-    using BlankHttpRequestTargetPtr = std::shared_ptr<BlankHttpRequestTarget>;
+    using RequestTargetPtr = std::shared_ptr<RequestTarget>;
 };
