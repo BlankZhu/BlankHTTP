@@ -1,4 +1,5 @@
 add_library(blankhttp SHARED
+    BlankHttpClient.ipp
     BlankHttpConfig.cpp
     BlankHttpContext.cpp
     BlankHttpDefaultMiddleware.cpp
@@ -10,6 +11,7 @@ add_library(blankhttp SHARED
     BlankHttpResponse.cpp
     BlankHttpRouter.cpp
     BlankHttpRouteTable.cpp
+    BlankHttpsClient.ipp
     BlankHttpServer.cpp
     BlankHttpSession.cpp
     BlankHttpUtility.cpp
