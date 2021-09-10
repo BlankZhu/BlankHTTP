@@ -7,11 +7,12 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include "Utility.h"
+
 namespace blank
 {
     using Query = std::unordered_map<std::string, std::vector<std::string>>;
 
-    // 
     class RequestTarget
     {
     public:
@@ -21,8 +22,11 @@ namespace blank
     public:
         void parse_from_string(const std::string &target);
         std::string get_path() const;
+        std::string get_decoded_path() const;
         std::vector<std::string> get_query(const std::string &key) const;
+        std::vector<std::string> get_decoded_query(const std::string &key) const;
         std::string get_fragment() const;
+        std::string get_decoded_fragment() const;
 
     private:
         std::string extract_path_from_target(const std::string &target) const;

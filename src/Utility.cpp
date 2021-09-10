@@ -2,8 +2,7 @@
 
 namespace blank
 {
-
-    std::string encode_url(std::string_view to_encode)
+    std::string percent_encode(std::string_view to_encode)
     {
         std::stringstream res;
 
@@ -60,7 +59,7 @@ namespace blank
         return res.str();
     }
 
-    std::string decode_url(std::string_view to_decode)
+    std::string percent_decode(std::string_view to_decode)
     {
         std::stringstream ss{};
         static const std::unordered_set<char> hex{
@@ -109,5 +108,15 @@ namespace blank
         }
 
         return ss.str();
+    }
+
+    std::string encode_url(std::string_view url_to_encode)
+    {
+        return percent_encode(url_to_encode);
+    }
+
+    std::string decode_url(std::string_view url_to_decode)
+    {
+        return percent_decode(url_to_decode);
     }
 };

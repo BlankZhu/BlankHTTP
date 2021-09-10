@@ -19,6 +19,11 @@ namespace blank
         return path_;
     }
 
+    std::string RequestTarget::get_decoded_path() const
+    {
+        return percent_decode(get_path());
+    }
+
     std::vector<std::string> RequestTarget::get_query(const std::string &key) const
     {
         auto found = query_.find(key);
@@ -29,9 +34,24 @@ namespace blank
         return found->second;
     }
 
+    std::vector<std::string> RequestTarget::get_decoded_query(const std::string &key) const
+    {
+        auto found = get_query(key);
+        for (auto &value : found)
+        {
+            value = percent_decode(value);
+        }
+        return found;
+    }
+
     std::string RequestTarget::get_fragment() const
     {
         return fragment_;
+    }
+
+    std::string RequestTarget::get_decoded_fragment() const
+    {
+        return percent_decode(get_fragment());
     }
 
     std::string RequestTarget::extract_path_from_target(const std::string &target) const
