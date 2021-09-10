@@ -1,8 +1,8 @@
-#include "BlankHttpServer.h"
+#include "Server.h"
 
 namespace blank
 {
-    void BlankHttpServer::run()
+    void Server::run()
     {
         setup_logger();
         BOOST_LOG_TRIVIAL(info) << "running BlankHTTPServer with config: " << conf_.to_json_string();
@@ -14,7 +14,7 @@ namespace blank
 
         net::spawn(ioc,
                    std::bind(
-                       &BlankHttpServer::listen,
+                       &Server::listen,
                        this,
                        std::ref(ioc),
                        ep,
@@ -30,28 +30,28 @@ namespace blank
         ioc.run();
     }
 
-    void BlankHttpServer::register_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler, bool enable_default_middlewares)
+    void Server::register_handler(const std::string &path, const http::verb &method, HandlerPtr handler, bool enable_default_middlewares)
     {
         if (enable_default_middlewares)
         {
-            auto chain = std::make_shared<BlankHttpHandleChain>(handler, true);
+            auto chain = std::make_shared<HandleChain>(handler, true);
             router_->add_handler(path, method, chain);
             return;
         }
         router_->add_handler(path, method, handler);
     }
 
-    void BlankHttpServer::register_chain(const std::string &path, const http::verb &method, BlankHttpHandleChainPtr chain)
+    void Server::register_chain(const std::string &path, const http::verb &method, HandleChainPtr chain)
     {
         router_->add_handler(path, method, chain);
     }
 
-    void BlankHttpServer::setup_logger()
+    void Server::setup_logger()
     {
-        BlankHttpLogger::init(conf_.log_level);
+        Logger::init(conf_.log_level);
     }
 
-    void BlankHttpServer::listen(net::io_context &ioc, tcp::endpoint ep, net::yield_context yield)
+    void Server::listen(net::io_context &ioc, tcp::endpoint ep, net::yield_context yield)
     {
         beast::error_code ec;
 
@@ -93,11 +93,11 @@ namespace blank
             else
             {
                 std::chrono::seconds timeout{conf_.timeout};
-                auto session = std::make_shared<BlankHttpSession>(std::move(socket), timeout, router_);
+                auto session = std::make_shared<Session>(std::move(socket), timeout, router_);
                 net::spawn(
                     acceptor.get_executor(),
                     std::bind(
-                        &BlankHttpSession::handle_session,
+                        &Session::handle_session,
                         session,
                         std::placeholders::_1));
             }

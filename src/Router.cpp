@@ -1,14 +1,14 @@
-#include "BlankHttpRouter.h"
+#include "Router.h"
 
 namespace blank
 {
-    void BlankHttpRouter::add_handler(const std::string& path, const http::verb &method, BlankHttpHandlerPtr handler)
+    void Router::add_handler(const std::string& path, const http::verb &method, HandlerPtr handler)
     {
         std::unique_lock lock{mutex_};
         table_.add_handler(path, method, handler);
     }
 
-    BlankHttpHandlerPtr BlankHttpRouter::get_handler(BlankHttpContextPtr context) const
+    HandlerPtr Router::get_handler(ContextPtr context) const
     {
         std::shared_lock lock{mutex_};
         auto ret = table_.get_handler(context);
@@ -16,6 +16,6 @@ namespace blank
         {
             return ret;
         }
-        return std::make_shared<BlankHttpHandleChain>();
+        return std::make_shared<HandleChain>();
     }
 };

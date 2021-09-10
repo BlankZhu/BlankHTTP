@@ -1,8 +1,8 @@
-#include "BlankHttpDefaultMiddleware.h"
+#include "DefaultMiddleware.h"
 
 namespace blank
 {
-    BlankHttpResponse BlankHttpDefaultMiddleware::handle_request(BlankHttpContextPtr ctx, Request &&req)
+    Response DefaultMiddleware::handle_request(ContextPtr ctx, Request &&req)
     {
         auto start = std::chrono::system_clock::now();
         auto resp = next(ctx, std::move(req));

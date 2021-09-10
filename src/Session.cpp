@@ -1,8 +1,8 @@
-#include "BlankHttpSession.h"
+#include "Session.h"
 
 namespace blank
 {
-    void BlankHttpSession::handle_session(net::yield_context yield)
+    void Session::handle_session(net::yield_context yield)
     {
         beast::error_code ec;
 
@@ -25,9 +25,9 @@ namespace blank
             // handle request, generate response
             // setup context
             auto remote_endpoint = stream_.socket().remote_endpoint();
-            auto target = std::make_shared<BlankHttpRequestTarget>();
+            auto target = std::make_shared<RequestTarget>();
             target->parse_from_string(req.target().to_string());
-            auto context = std::make_shared<BlankHttpContext>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield));
+            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield));
 
             auto handler = router_->get_handler(context);
             auto resp = handler->handle_request(context, std::move(req));
@@ -57,7 +57,7 @@ namespace blank
         stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
     }
 
-    bool BlankHttpSession::write_string_response(BlankHttpResponse resp, net::yield_context &yield, beast::error_code &ec)
+    bool Session::write_string_response(Response resp, net::yield_context &yield, beast::error_code &ec)
     {
         auto res = resp.get_string_response();
         if (res == nullptr)
@@ -71,7 +71,7 @@ namespace blank
         return http_conn_close;
     }
     
-    bool BlankHttpSession::write_file_response(BlankHttpResponse resp, net::yield_context &yield, beast::error_code &ec)
+    bool Session::write_file_response(Response resp, net::yield_context &yield, beast::error_code &ec)
     {
         auto res = resp.get_file_response();
         if (res == nullptr)

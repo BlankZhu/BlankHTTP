@@ -1,8 +1,8 @@
-#include "BlankHttpRouteTable.h"
+#include "RouteTable.h"
 
 namespace blank
 {
-    void BlankHttpRouteTable::add_handler(const std::string &path, const http::verb &method, BlankHttpHandlerPtr handler)
+    void RouteTable::add_handler(const std::string &path, const http::verb &method, HandlerPtr handler)
     {
         auto tmp_path = add_leading_slash(path);
         std::vector<std::string> pieces{};
@@ -26,7 +26,7 @@ namespace blank
             if (found == curr->node_map.end())
             {
                 // add a new node
-                auto new_node = std::make_shared<BlankHttpRouteNode>();
+                auto new_node = std::make_shared<RouteNode>();
                 // check if current piece is a wildcard
                 if (piece.length() >= 2 && piece[0] == ':')
                 {
@@ -49,7 +49,7 @@ namespace blank
         // handle tailling slash here
         if (pieces.back().length() == 0)
         {
-            auto tail_node = std::make_shared<BlankHttpRouteNode>();
+            auto tail_node = std::make_shared<RouteNode>();
             tail_node->is_wildcard = false;
             curr->node_map.insert_or_assign("", tail_node);
             curr = tail_node;
@@ -59,7 +59,7 @@ namespace blank
         curr->handler_map[method_int] = handler;
     }
 
-    BlankHttpHandlerPtr BlankHttpRouteTable::get_handler(BlankHttpContextPtr context) const
+    HandlerPtr RouteTable::get_handler(ContextPtr context) const
     {
         auto tmp_path = add_leading_slash(context->get_path());
         std::vector<std::string> pieces{};
@@ -69,11 +69,11 @@ namespace blank
         return dfs_get_handler_helper(context, pieces, 0, curr);
     }
 
-    BlankHttpHandlerPtr BlankHttpRouteTable::dfs_get_handler_helper(
-        BlankHttpContextPtr context,
+    HandlerPtr RouteTable::dfs_get_handler_helper(
+        ContextPtr context,
         const std::vector<std::string> &pieces,
         std::size_t index,
-        BlankHttpRouteNodePtr curr_node) const
+        RouteNodePtr curr_node) const
     {
         while (pieces[index].length() == 0 && index < pieces.size() - 1) // skip till the last elem (splited by tailing slash)
         {
@@ -118,7 +118,7 @@ namespace blank
         return nullptr;
     }
 
-    std::string BlankHttpRouteTable::add_leading_slash(const std::string &path) const
+    std::string RouteTable::add_leading_slash(const std::string &path) const
     {
         if (!path.empty() && path[0] != '/')
         {

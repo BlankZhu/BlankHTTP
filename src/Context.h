@@ -8,7 +8,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/http.hpp>
 
-#include "BlankHttpRequestTarget.h"
+#include "RequestTarget.h"
 
 namespace blank
 {
@@ -17,12 +17,12 @@ namespace blank
     using tcp = boost::asio::ip::tcp;
     using Param = std::unordered_map<std::string, std::string>;
 
-    class BlankHttpContext
+    class Context
     {
     public:
-        BlankHttpContext(
+        Context(
             tcp::endpoint endpoint,
-            BlankHttpRequestTargetPtr target,
+            RequestTargetPtr target,
             const http::verb &method,
             net::any_io_executor executor,
             net::yield_context &yield)
@@ -31,7 +31,7 @@ namespace blank
               request_method_(method),
               executor_(executor),
               yield_(yield) {}
-        ~BlankHttpContext() = default;
+        ~Context() = default;
 
     public:
         void set_param(const std::string &key, const std::string &value);
@@ -46,11 +46,11 @@ namespace blank
     private:
         Param param_;
         tcp::endpoint remote_endpoint_;
-        BlankHttpRequestTargetPtr request_target_;
+        RequestTargetPtr request_target_;
         http::verb request_method_;
         net::any_io_executor executor_;
         net::yield_context &yield_;
     };
 
-    using BlankHttpContextPtr = std::shared_ptr<BlankHttpContext>;
+    using ContextPtr = std::shared_ptr<Context>;
 };

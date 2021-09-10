@@ -1,8 +1,8 @@
-#include "BlankHttpLogger.h"
+#include "Logger.h"
 
 namespace blank
 {
-    void BlankHttpLogger::init(int log_level)
+    void Logger::init(int log_level)
     {
         auto lv = parse_log_level(log_level);
     
@@ -16,7 +16,7 @@ namespace blank
         logging::add_common_attributes();
     }
 
-    trivial::severity_level BlankHttpLogger::parse_log_level(int log_level)
+    trivial::severity_level Logger::parse_log_level(int log_level)
     {
         if (log_level <= 0)
         {
