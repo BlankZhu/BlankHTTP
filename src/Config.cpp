@@ -36,7 +36,8 @@ namespace blank
         ss << "serving at: [" << address << ":" << port << "], "
            << "with HTTP timeout: [" << timeout << "] in second, "
            << "running in thread number: [" << threads << "], "
-           << "on log level: [" << log_level << "]";
+           << "on log level: [" << log_level << "], "
+           << "logging to file [" << log_filename <<"]";
         return ss.str();
     }
 
@@ -49,6 +50,7 @@ namespace blank
         obj["port"] = port;
         obj["threads"] = threads;
         obj["log_level"] = log_level;
+        obj["log_filename"] = log_filename;
 
         return json::serialize(obj);
     }

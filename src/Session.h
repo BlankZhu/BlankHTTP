@@ -8,6 +8,7 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 
+#include "Config.h"
 #include "Context.h"
 #include "Logger.h"
 #include "RequestTarget.h"
@@ -26,13 +27,13 @@ namespace blank
     {
     public:
         Session(tcp::socket &&socket,
-                         const std::chrono::seconds timeout,
-                         const RouterPtr router)
+                const std::chrono::seconds timeout,
+                const RouterPtr router)
             : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
         ~Session() = default;
 
     public:
-        void handle_session(net::yield_context yield);
+        void handle_session(Logger &logger, net::yield_context yield);
 
     private:
         bool write_string_response(Response resp, net::yield_context &yield, beast::error_code &ec);

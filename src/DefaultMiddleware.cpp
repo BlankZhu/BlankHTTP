@@ -9,9 +9,14 @@ namespace blank
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<float> upstream_duration = end - start;
 
-        BOOST_LOG_TRIVIAL(info) << "[" << resp.get_status_code() << "] [" << req.method_string()
-                                << "] [" << req.target() << "] ["
-                                << upstream_duration.count() << "ms]";
+        ctx->logger.info(
+            fmt("[%1%] [%2%] [%3%] [%4%]")
+            % resp.get_status_code()
+            % req.method_string()
+            % req.target()
+            % upstream_duration.count()
+        );
+
         resp.prepare_payload();
         return resp;
     }

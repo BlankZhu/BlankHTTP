@@ -2,7 +2,7 @@
 
 namespace blank
 {
-    void Session::handle_session(net::yield_context yield)
+    void Session::handle_session(Logger &logger, net::yield_context yield)
     {
         beast::error_code ec;
 
@@ -18,7 +18,7 @@ namespace blank
             }
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session read request error, detail: " << ec.message();
+                logger.error(fmt("failed to read HTTP request, detail: [%1%]") % ec.message());
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace blank
             auto remote_endpoint = stream_.socket().remote_endpoint();
             auto target = std::make_shared<RequestTarget>();
             target->parse_from_string(req.target().to_string());
-            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield));
+            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield), logger);
 
             auto handler = router_->get_handler(context);
             auto resp = handler->handle_request(context, std::move(req));
@@ -45,7 +45,7 @@ namespace blank
 
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session write response error, detail: " << ec.message();
+                logger.error(fmt("failed to write HTTP response, detail: [%1%]") % ec.message());
                 return;
             }
             if (http_conn_closed)
