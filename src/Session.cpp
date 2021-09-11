@@ -30,7 +30,7 @@ namespace blank
             auto remote_endpoint = stream_.socket().remote_endpoint();
             auto target = std::make_shared<RequestTarget>();
             target->parse_from_string(req.target().to_string());
-            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield));
+            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), stream_.socket().get_executor(), std::ref(yield), logger);
 
             auto handler = router_->get_handler(context);
             auto resp = handler->handle_request(context, std::move(req));

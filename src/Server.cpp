@@ -99,6 +99,7 @@ namespace blank
                     std::bind(
                         &Session::handle_session,
                         session,
+                        conf_,
                         std::placeholders::_1));
             }
         }
