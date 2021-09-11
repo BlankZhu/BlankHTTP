@@ -2,12 +2,9 @@
 
 namespace blank
 {
-    void Session::handle_session(Config &conf, net::yield_context yield)
+    void Session::handle_session(Logger &logger, net::yield_context yield)
     {
         beast::error_code ec;
-        // create a new logger here, since the logging we use is not thread-safe
-        Logger logger{};
-        logger.init(conf.log_level, conf.log_filename);
 
         while (true)
         {

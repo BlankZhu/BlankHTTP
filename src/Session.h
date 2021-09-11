@@ -33,7 +33,7 @@ namespace blank
         ~Session() = default;
 
     public:
-        void handle_session(Config &conf, net::yield_context yield);
+        void handle_session(Logger &logger, net::yield_context yield);
 
     private:
         bool write_string_response(Response resp, net::yield_context &yield, beast::error_code &ec);
