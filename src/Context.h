@@ -9,6 +9,7 @@
 #include <boost/beast/http.hpp>
 
 #include "RequestTarget.h"
+#include "Logger.h"
 
 namespace blank
 {
@@ -25,12 +26,14 @@ namespace blank
             RequestTargetPtr target,
             const http::verb &method,
             net::any_io_executor executor,
-            net::yield_context &yield)
+            net::yield_context &yield,
+            Logger &logger)
             : remote_endpoint_(endpoint),
               request_target_(target),
               request_method_(method),
               executor_(executor),
-              yield_(yield) {}
+              yield_(yield),
+              logger(logger) {}
         ~Context() = default;
 
     public:
@@ -50,6 +53,9 @@ namespace blank
         http::verb request_method_;
         net::any_io_executor executor_;
         net::yield_context &yield_;
+
+    public:
+        Logger &logger;
     };
 
     using ContextPtr = std::shared_ptr<Context>;

@@ -21,5 +21,6 @@ namespace blank
         std::string address;
         unsigned short port;
         int timeout;
+        std::string log_filename;
     };
 };

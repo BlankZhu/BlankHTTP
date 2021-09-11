@@ -41,5 +41,6 @@ namespace blank
     private:
         Config conf_;
         RouterPtr router_;
+        Logger logger_;
     };
 };

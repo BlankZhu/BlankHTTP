@@ -2,9 +2,12 @@
 
 namespace blank
 {
-    void Session::handle_session(net::yield_context yield)
+    void Session::handle_session(Config &conf, net::yield_context yield)
     {
         beast::error_code ec;
+        // create a new logger here, since the logging we use is not thread-safe
+        Logger logger{};
+        logger.init(conf.log_level, conf.log_filename);
 
         while (true)
         {
@@ -18,7 +21,7 @@ namespace blank
             }
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session read request error, detail: " << ec.message();
+                logger.error(fmt("failed to read HTTP request, detail: [%1%]") % ec.message());
                 return;
             }
 
@@ -45,7 +48,7 @@ namespace blank
 
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "HTTP session write response error, detail: " << ec.message();
+                logger.error(fmt("failed to write HTTP response, detail: [%1%]") % ec.message());
                 return;
             }
             if (http_conn_closed)

@@ -5,7 +5,7 @@ namespace blank
     void Server::run()
     {
         setup_logger();
-        BOOST_LOG_TRIVIAL(info) << "running BlankHTTPServer with config: " << conf_.to_json_string();
+        logger_.info(fmt("running BlankHTTPServer with config: %1%") % conf_.to_json_string());
 
         auto addr = net::ip::make_address(conf_.address);
         auto ep = tcp::endpoint{addr, conf_.port};
@@ -48,7 +48,7 @@ namespace blank
 
     void Server::setup_logger()
     {
-        Logger::init(conf_.log_level);
+        logger_.init(conf_.log_level, conf_.log_filename);
     }
 
     void Server::listen(net::io_context &ioc, tcp::endpoint ep, net::yield_context yield)
@@ -59,25 +59,25 @@ namespace blank
         acceptor.open(ep.protocol(), ec);
         if (ec)
         {
-            BOOST_LOG_TRIVIAL(error) << "acceptor open socket error, detail: " << ec.message();
+            logger_.error(fmt("acceptor failed to open socket, detail: [%1%]") % ec.message());
             return;
         }
         acceptor.set_option(net::socket_base::reuse_address(true), ec);
         if (ec)
         {
-            BOOST_LOG_TRIVIAL(error) << "acceptor set socket option error, detail: " << ec.message();
+            logger_.error(fmt("acceptor failed to set socket option, detail: [%1%]") % ec.message());
             return;
         }
         acceptor.bind(ep, ec);
         if (ec)
         {
-            BOOST_LOG_TRIVIAL(error) << "acceptor bind address error, detail: " << ec.message();
+            logger_.error(fmt("acceptor failed to bind address, detail: [%1%]") % ec.message());
             return;
         }
         acceptor.listen(net::socket_base::max_listen_connections, ec);
         if (ec)
         {
-            BOOST_LOG_TRIVIAL(error) << "acceptor listen error, detail: " << ec.message();
+            logger_.error(fmt("acceptor failed to listen connection, detail: [%1%]") % ec.message());
             return;
         }
 
@@ -87,7 +87,7 @@ namespace blank
             acceptor.async_accept(socket, yield[ec]);
             if (ec)
             {
-                BOOST_LOG_TRIVIAL(error) << "acceptor accept connection error, detail: " << ec.message();
+                logger_.error(fmt("acceptor failed to accept connection, detail: [%1%]") % ec.message());
                 continue;
             }
             else
