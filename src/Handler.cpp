@@ -2,6 +2,16 @@
 
 namespace blank
 {
+    std::any Handler::get_extra_data() const
+    {
+        return extra_data_;
+    }
+
+    void Handler::set_extra_data(const std::any &data)
+    {
+        extra_data_ = data;
+    }
+
     Response Handler::handle_request(ContextPtr ctx, Request &&req)
     {
         return base_not_found(ctx, std::move(req));
