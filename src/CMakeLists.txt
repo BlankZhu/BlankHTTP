@@ -14,6 +14,7 @@ add_library(blankhttp SHARED
     RouteTable.cpp
     Server.cpp
     Session.cpp
+    SessionSSL.cpp
     Utility.cpp
 )
 
@@ -34,6 +35,7 @@ set (BLANK_HTTP_HEADERS
     RouteTable.h
     Server.h
     Session.h
+    SessionSSL.h
     Utility.h
 )
 

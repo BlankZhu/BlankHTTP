@@ -22,5 +22,8 @@ namespace blank
         unsigned short port;
         int timeout;
         std::string log_filename;
+        bool enable_ssl;
+        std::string cert_path;
+        std::string pri_key_path;
     };
 };

@@ -37,7 +37,16 @@ namespace blank
            << "with HTTP timeout: [" << timeout << "] in second, "
            << "running in thread number: [" << threads << "], "
            << "on log level: [" << log_level << "], "
-           << "logging to file [" << log_filename <<"]";
+           << "logging to file: [" << log_filename << "], "
+           << "enable ssl: [" << enable_ssl << "]";
+
+        if (enable_ssl)
+        {
+            ss << ", "
+               << "using server certification: " << cert_path << "], "
+               << "using private key: " << pri_key_path << "]";
+        }
+
         return ss.str();
     }
 
@@ -51,6 +60,13 @@ namespace blank
         obj["threads"] = threads;
         obj["log_level"] = log_level;
         obj["log_filename"] = log_filename;
+        obj["enable_ssl"] = enable_ssl;
+
+        if (enable_ssl)
+        {
+            obj["cert_path"] = cert_path;
+            obj["pri_key_path"] = pri_key_path;
+        }
 
         return json::serialize(obj);
     }
