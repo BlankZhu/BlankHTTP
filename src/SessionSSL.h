@@ -9,7 +9,6 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/ssl.hpp>
 
-#include "Config.h"
 #include "Context.h"
 #include "Logger.h"
 #include "RequestTarget.h"

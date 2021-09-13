@@ -8,7 +8,6 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 
-#include "Config.h"
 #include "Context.h"
 #include "Logger.h"
 #include "RequestTarget.h"
