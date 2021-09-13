@@ -4,8 +4,8 @@ add_library(blankhttp SHARED
     DefaultMiddleware.cpp
     HandleChain.cpp
     Handler.cpp
-    HttpClient.ipp
-    HttpsClient.ipp
+    Client.ipp
+    ClientSSL.ipp
     Logger.cpp
     Middleware.cpp
     RequestTarget.cpp
@@ -25,8 +25,8 @@ set (BLANK_HTTP_HEADERS
     DefaultMiddleware.h
     HandleChain.h
     Handler.h
-    HttpClient.hpp
-    HttpsClient.hpp
+    Client.hpp
+    ClientSSL.hpp
     Logger.h
     Middleware.h
     RequestTarget.h

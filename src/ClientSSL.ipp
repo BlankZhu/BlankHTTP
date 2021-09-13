@@ -1,9 +1,9 @@
-#include "HttpsClient.hpp"
+#include "ClientSSL.hpp"
 
 namespace blank
 {
 
-    sClient::~sClient()
+    ClientSSL::~ClientSSL()
     {
         if (is_connected_)
         {
@@ -12,7 +12,7 @@ namespace blank
         }
     }
 
-    void sClient::Connect(beast::error_code &ec)
+    void ClientSSL::Connect(beast::error_code &ec)
     {
         if (is_connected_)
         {
@@ -50,7 +50,7 @@ namespace blank
         is_connected_ = true;
     }
 
-    void sClient::Shutdown(beast::error_code &ec)
+    void ClientSSL::Shutdown(beast::error_code &ec)
     {
         if (is_connected_)
         {
@@ -66,7 +66,7 @@ namespace blank
     }
 
     template <class Body, class Fields>
-    void sClient::DoRequest(const http::message<true, Body, Fields> &request,
+    void ClientSSL::DoRequest(const http::message<true, Body, Fields> &request,
                             http::message<false, Body, Fields> &response,
                             beast::error_code &ec)
     {
@@ -95,7 +95,7 @@ namespace blank
     }
 
     template <class Body, class Fields>
-    void sClient::Download(const http::message<true, Body, Fields> &request,
+    void ClientSSL::Download(const http::message<true, Body, Fields> &request,
                            const std::string &save_path,
                            beast::error_code &ec)
     {

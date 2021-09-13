@@ -17,10 +17,10 @@ namespace blank
     namespace ssl = boost::asio::ssl;
     using tcp = boost::asio::ip::tcp;
 
-    class sClient
+    class ClientSSL
     {
     public:
-        sClient(
+        ClientSSL(
             const std::string &host,
             const std::string &port,
             const std::chrono::seconds &timeout,
@@ -37,8 +37,8 @@ namespace blank
               yield_(yield)
         {
         }
-        sClient(sClient &&) = default;
-        ~sClient();
+        ClientSSL(ClientSSL &&) = default;
+        ~ClientSSL();
 
     public:
         void Connect(beast::error_code &ec);
