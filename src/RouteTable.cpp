@@ -54,7 +54,7 @@ namespace blank
             curr->node_map.insert_or_assign("", tail_node);
             curr = tail_node;
         }
-        
+
         int method_int = static_cast<int>(method);
         curr->handler_map[method_int] = handler;
     }

@@ -65,11 +65,11 @@ namespace blank
     void Server::setup_ssl_context(beast::error_code &ec)
     {
         ssl_ctx_.set_options(ssl::context::default_workarounds |
-                         ssl::context::no_sslv2 |
-                         ssl::context::no_sslv3 |
-                         ssl::context::no_tlsv1 |
-                         ssl::context::no_tlsv1_1 |
-                         ssl::context::single_dh_use);
+                             ssl::context::no_sslv2 |
+                             ssl::context::no_sslv3 |
+                             ssl::context::no_tlsv1 |
+                             ssl::context::no_tlsv1_1 |
+                             ssl::context::single_dh_use);
 
         ssl_ctx_.use_certificate_chain_file(conf_.cert_path, ec);
         if (ec)

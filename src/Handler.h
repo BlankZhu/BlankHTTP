@@ -5,8 +5,8 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 
-#include "Context.h"
 #include "Constant.h"
+#include "Context.h"
 #include "Response.h"
 
 namespace blank

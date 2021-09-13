@@ -6,8 +6,8 @@
 #include <boost/beast/http.hpp>
 
 #include "Context.h"
-#include "Handler.h"
 #include "HandleChain.h"
+#include "Handler.h"
 #include "RouteTable.h"
 
 namespace blank

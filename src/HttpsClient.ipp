@@ -67,8 +67,8 @@ namespace blank
 
     template <class Body, class Fields>
     void sClient::DoRequest(const http::message<true, Body, Fields> &request,
-                                     http::message<false, Body, Fields> &response,
-                                     beast::error_code &ec)
+                            http::message<false, Body, Fields> &response,
+                            beast::error_code &ec)
     {
         if (!is_connected_)
         {
@@ -96,8 +96,8 @@ namespace blank
 
     template <class Body, class Fields>
     void sClient::Download(const http::message<true, Body, Fields> &request,
-                                    const std::string &save_path,
-                                    beast::error_code &ec)
+                           const std::string &save_path,
+                           beast::error_code &ec)
     {
         if (!is_connected_)
         {

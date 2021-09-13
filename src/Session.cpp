@@ -70,7 +70,7 @@ namespace blank
         http::async_write(stream_, *res, yield[ec]);
         return http_conn_close;
     }
-    
+
     bool Session::write_file_response(Response resp, net::yield_context &yield, beast::error_code &ec)
     {
         auto res = resp.get_file_response();

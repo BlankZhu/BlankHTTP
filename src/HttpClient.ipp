@@ -46,8 +46,8 @@ namespace blank
 
     template <class Body, class Fields>
     void Client::DoRequest(const http::message<true, Body, Fields> &request,
-                                    http::message<false, Body, Fields> &response,
-                                    net::yield_context &yield, beast::error_code &ec)
+                           http::message<false, Body, Fields> &response,
+                           net::yield_context &yield, beast::error_code &ec)
     {
         if (!is_connected_)
         {
@@ -75,8 +75,8 @@ namespace blank
 
     template <class Body, class Fields>
     void Client::Download(const http::message<true, Body, Fields> &request,
-                                   const std::string &save_path,
-                                   net::yield_context &yield, beast::error_code &ec)
+                          const std::string &save_path,
+                          net::yield_context &yield, beast::error_code &ec)
     {
         if (!is_connected_)
         {

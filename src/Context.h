@@ -8,8 +8,8 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/http.hpp>
 
-#include "RequestTarget.h"
 #include "Logger.h"
+#include "RequestTarget.h"
 
 namespace blank
 {

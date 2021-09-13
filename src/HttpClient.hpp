@@ -19,7 +19,7 @@ namespace blank
     {
     public:
         Client(const std::string &host, const std::string &port,
-                        const std::chrono::seconds &timeout, net::any_io_executor executor)
+               const std::chrono::seconds &timeout, net::any_io_executor executor)
             : host_(host), port_(port), timeout_(timeout), is_connected_(false),
               resolver_(executor), stream_(executor) {}
         Client(Client &&) = default;

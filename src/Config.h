@@ -14,7 +14,7 @@ namespace blank
         void calibrate();
         std::string to_readable_string() const;
         std::string to_json_string() const;
-    
+
     public:
         int log_level;
         int threads;
