@@ -7,6 +7,17 @@ namespace blank
         setup_logger();
         logger_.info(fmt("running BlankHTTPServer with config: %1%") % conf_.to_json_string());
 
+        if (conf_.enable_ssl)
+        {
+            beast::error_code ec;
+            setup_ssl_context(ec);
+            if (ec)
+            {
+                logger_.fatal(fmt("failed to setup SSL, detail: [%1%]") % ec.message());
+                return;
+            }
+        }
+
         auto addr = net::ip::make_address(conf_.address);
         auto ep = tcp::endpoint{addr, conf_.port};
 
@@ -51,6 +62,25 @@ namespace blank
         logger_.init(conf_.log_level, conf_.log_filename);
     }
 
+    void Server::setup_ssl_context(beast::error_code &ec)
+    {
+        ssl_ctx_.set_options(ssl::context::default_workarounds |
+                         ssl::context::no_sslv2 |
+                         ssl::context::no_sslv3 |
+                         ssl::context::no_tlsv1 |
+                         ssl::context::no_tlsv1_1 |
+                         ssl::context::single_dh_use);
+
+        ssl_ctx_.use_certificate_chain_file(conf_.cert_path, ec);
+        if (ec)
+        {
+            return;
+        }
+        ssl_ctx_.use_private_key_file(conf_.pri_key_path, ssl::context::file_format::pem, ec);
+
+        return;
+    }
+
     void Server::listen(net::io_context &ioc, tcp::endpoint ep, net::yield_context yield)
     {
         beast::error_code ec;
@@ -90,9 +120,22 @@ namespace blank
                 logger_.error(fmt("acceptor failed to accept connection, detail: [%1%]") % ec.message());
                 continue;
             }
+
+            std::chrono::seconds timeout{conf_.timeout};
+
+            if (conf_.enable_ssl)
+            {
+                auto session = std::make_shared<SessionSSL>(std::move(socket), std::ref(ssl_ctx_), timeout, router_);
+                net::spawn(
+                    acceptor.get_executor(),
+                    std::bind(
+                        &SessionSSL::handle_session,
+                        session,
+                        logger_,
+                        std::placeholders::_1));
+            }
             else
             {
-                std::chrono::seconds timeout{conf_.timeout};
                 auto session = std::make_shared<Session>(std::move(socket), timeout, router_);
                 net::spawn(
                     acceptor.get_executor(),
