@@ -19,34 +19,39 @@
 #include "Session.h"
 #include "SessionSSL.h"
 
-namespace blank
-{
-    namespace beast = boost::beast;
-    namespace http = boost::beast::http;
-    namespace net = boost::asio;
-    namespace ssl = boost::asio::ssl;
-    using tcp = boost::asio::ip::tcp;
+namespace blank {
+namespace beast = boost::beast;
+namespace http = boost::beast::http;
+namespace net = boost::asio;
+namespace ssl = boost::asio::ssl;
+using tcp = boost::asio::ip::tcp;
 
-    class Server
-    {
-    public:
-        Server(Config &conf) : conf_(conf), router_(std::make_shared<Router>()), ssl_ctx_(ssl::context::tls_server) {}
-        ~Server() = default;
+class Server {
+   public:
+    Server(Config &conf)
+        : conf_(conf),
+          router_(std::make_shared<Router>()),
+          ssl_ctx_(ssl::context::tls_server) {}
+    ~Server() = default;
 
-    public:
-        void run();
-        void register_handler(const std::string &path, const http::verb &method, HandlerPtr handler, bool enable_default_middlewares = true);
-        void register_chain(const std::string &path, const http::verb &method, HandleChainPtr handle_chain);
+   public:
+    void run();
+    void register_handler(const std::string &path, const http::verb &method,
+                          HandlerPtr handler,
+                          bool enable_default_middlewares = true);
+    void register_chain(const std::string &path, const http::verb &method,
+                        HandleChainPtr handle_chain);
 
-    private:
-        void setup_logger();
-        void setup_ssl_context(beast::error_code &ec);
-        void listen(net::io_context &ioc, tcp::endpoint ep, net::yield_context yield);
+   private:
+    void setup_logger();
+    void setup_ssl_context(beast::error_code &ec);
+    void listen(net::io_context &ioc, tcp::endpoint ep,
+                net::yield_context yield);
 
-    private:
-        Config conf_;
-        RouterPtr router_;
-        Logger logger_;
-        ssl::context ssl_ctx_;
-    };
+   private:
+    Config conf_;
+    RouterPtr router_;
+    Logger logger_;
+    ssl::context ssl_ctx_;
 };
+};  // namespace blank

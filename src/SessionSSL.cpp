@@ -1,94 +1,88 @@
 #include "SessionSSL.h"
 
-namespace blank
-{
-    void SessionSSL::handle_session(Logger &logger, net::yield_context yield)
-    {
-        beast::error_code ec;
+namespace blank {
+void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
+    beast::error_code ec;
 
-        // perform ssl handshake
+    // perform ssl handshake
+    beast::get_lowest_layer(stream_).expires_after(timeout_);
+    stream_.async_handshake(ssl::stream_base::server, yield[ec]);
+    if (ec) {
+        logger.error(fmt("failed to perform SSL handshake, detail: [%1%]") %
+                     ec.message());
+        return;
+    }
+
+    while (true) {
+        // read in the request
         beast::get_lowest_layer(stream_).expires_after(timeout_);
-        stream_.async_handshake(ssl::stream_base::server, yield[ec]);
-        if (ec)
-        {
-            logger.error(fmt("failed to perform SSL handshake, detail: [%1%]") % ec.message());
+        Request req;
+        http::async_read(stream_, buffer_, req, yield[ec]);
+        if (ec == http::error::end_of_stream) {
+            break;
+        }
+        if (ec) {
+            logger.error(fmt("failed to read HTTP request, detail: [%1%]") %
+                         ec.message());
             return;
         }
 
-        while (true)
-        {
-            // read in the request
-            beast::get_lowest_layer(stream_).expires_after(timeout_);
-            Request req;
-            http::async_read(stream_, buffer_, req, yield[ec]);
-            if (ec == http::error::end_of_stream)
-            {
-                break;
-            }
-            if (ec)
-            {
-                logger.error(fmt("failed to read HTTP request, detail: [%1%]") % ec.message());
-                return;
-            }
+        // handle request, generate response
+        auto remote_endpoint =
+            beast::get_lowest_layer(stream_).socket().remote_endpoint();
+        auto target = std::make_shared<RequestTarget>();
+        target->parse_from_string(req.target().to_string());
+        auto executor =
+            beast::get_lowest_layer(stream_).socket().get_executor();
+        auto context =
+            std::make_shared<Context>(remote_endpoint, target, req.method(),
+                                      executor, std::ref(yield), logger);
 
-            // handle request, generate response
-            auto remote_endpoint = beast::get_lowest_layer(stream_).socket().remote_endpoint();
-            auto target = std::make_shared<RequestTarget>();
-            target->parse_from_string(req.target().to_string());
-            auto executor = beast::get_lowest_layer(stream_).socket().get_executor();
-            auto context = std::make_shared<Context>(remote_endpoint, target, req.method(), executor, std::ref(yield), logger);
+        auto handler = router_->get_handler(context);
+        auto resp = handler->handle_request(context, std::move(req));
 
-            auto handler = router_->get_handler(context);
-            auto resp = handler->handle_request(context, std::move(req));
-
-            // write the response
-            auto http_conn_closed = true;
-            if (resp.is_file_response())
-            {
-                http_conn_closed = write_file_response(resp, yield, ec);
-            }
-            else if (resp.is_string_response())
-            {
-                http_conn_closed = write_string_response(resp, yield, ec);
-            }
-
-            if (ec)
-            {
-                logger.error(fmt("failed to write HTTP response, detail: [%1%]") % ec.message());
-                return;
-            }
-            if (http_conn_closed)
-            {
-                break;
-            }
-        }
-    }
-
-    bool SessionSSL::write_string_response(Response resp, net::yield_context &yield, beast::error_code &ec)
-    {
-        auto res = resp.get_string_response();
-        if (res == nullptr)
-        {
-            return false;
+        // write the response
+        auto http_conn_closed = true;
+        if (resp.is_file_response()) {
+            http_conn_closed = write_file_response(resp, yield, ec);
+        } else if (resp.is_string_response()) {
+            http_conn_closed = write_string_response(resp, yield, ec);
         }
 
-        auto http_conn_close = res->need_eof();
-        beast::get_lowest_layer(stream_).expires_after(timeout_);
-        http::async_write(stream_, *res, yield[ec]);
-        return http_conn_close;
-    }
-
-    bool SessionSSL::write_file_response(Response resp, net::yield_context &yield, beast::error_code &ec)
-    {
-        auto res = resp.get_file_response();
-        if (res == nullptr)
-        {
-            return false;
+        if (ec) {
+            logger.error(fmt("failed to write HTTP response, detail: [%1%]") %
+                         ec.message());
+            return;
         }
-
-        auto http_conn_close = res->need_eof();
-        beast::get_lowest_layer(stream_).expires_after(timeout_);
-        http::async_write(stream_, *res, yield[ec]);
-        return http_conn_close;
+        if (http_conn_closed) {
+            break;
+        }
     }
 }
+
+bool SessionSSL::write_string_response(Response resp, net::yield_context &yield,
+                                       beast::error_code &ec) {
+    auto res = resp.get_string_response();
+    if (res == nullptr) {
+        return false;
+    }
+
+    auto http_conn_close = res->need_eof();
+    beast::get_lowest_layer(stream_).expires_after(timeout_);
+    http::async_write(stream_, *res, yield[ec]);
+    return http_conn_close;
+}
+
+bool SessionSSL::write_file_response(Response resp, net::yield_context &yield,
+                                     beast::error_code &ec) {
+    auto res = resp.get_file_response();
+    if (res == nullptr) {
+        return false;
+    }
+
+    auto http_conn_close = res->need_eof();
+    beast::get_lowest_layer(stream_).expires_after(timeout_);
+    http::async_write(stream_, *res, yield[ec]);
+    return http_conn_close;
+}
+}  // namespace blank

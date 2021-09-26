@@ -13,35 +13,34 @@
 #include "RequestTarget.h"
 #include "Router.h"
 
-namespace blank
-{
-    namespace beast = boost::beast;
-    namespace http = boost::beast::http;
-    namespace net = boost::asio;
-    using tcp = boost::asio::ip::tcp;
+namespace blank {
+namespace beast = boost::beast;
+namespace http = boost::beast::http;
+namespace net = boost::asio;
+using tcp = boost::asio::ip::tcp;
 
-    using Request = http::request<http::string_body>;
+using Request = http::request<http::string_body>;
 
-    class Session
-    {
-    public:
-        Session(tcp::socket &&socket,
-                const std::chrono::seconds timeout,
-                const RouterPtr router)
-            : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
-        ~Session() = default;
+class Session {
+   public:
+    Session(tcp::socket &&socket, const std::chrono::seconds timeout,
+            const RouterPtr router)
+        : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
+    ~Session() = default;
 
-    public:
-        void handle_session(Logger &logger, net::yield_context yield);
+   public:
+    void handle_session(Logger &logger, net::yield_context yield);
 
-    private:
-        bool write_string_response(Response resp, net::yield_context &yield, beast::error_code &ec);
-        bool write_file_response(Response resp, net::yield_context &yield, beast::error_code &ec);
+   private:
+    bool write_string_response(Response resp, net::yield_context &yield,
+                               beast::error_code &ec);
+    bool write_file_response(Response resp, net::yield_context &yield,
+                             beast::error_code &ec);
 
-    private:
-        beast::tcp_stream stream_;
-        const RouterPtr router_;
-        std::chrono::seconds timeout_;
-        beast::flat_buffer buffer_;
-    };
-}
+   private:
+    beast::tcp_stream stream_;
+    const RouterPtr router_;
+    std::chrono::seconds timeout_;
+    beast::flat_buffer buffer_;
+};
+}  // namespace blank

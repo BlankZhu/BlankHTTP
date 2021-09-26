@@ -7,15 +7,13 @@
 #include "Middleware.h"
 #include "Response.h"
 
-namespace blank
-{
-    class DefaultMiddleware : public Middleware
-    {
-    public:
-        DefaultMiddleware() : Middleware() {}
-        virtual ~DefaultMiddleware() = default;
+namespace blank {
+class DefaultMiddleware : public Middleware {
+   public:
+    DefaultMiddleware() : Middleware() {}
+    virtual ~DefaultMiddleware() = default;
 
-    public:
-        virtual Response handle_request(ContextPtr ctx, Request &&req);
-    };
+   public:
+    virtual Response handle_request(ContextPtr ctx, Request &&req);
 };
+};  // namespace blank
