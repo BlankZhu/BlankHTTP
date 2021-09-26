@@ -25,6 +25,7 @@ class Router {
 
    private:
     RouteTable table_;
+    // todo: the Router could be lock-free after intialization
     mutable std::shared_mutex mutex_;
 };
 
