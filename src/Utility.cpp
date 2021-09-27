@@ -1,4 +1,5 @@
 #include "Utility.h"
+#include <cstdint>
 
 namespace blank {
 std::string percent_encode(std::string_view to_encode) {
@@ -22,7 +23,7 @@ std::string percent_encode(std::string_view to_encode) {
         } else if (c == ';') {
             res << "%3B";
         } else {
-            auto u8 = static_cast<unsigned int8_t>(c);
+            std::uint8_t u8 = static_cast<std::uint8_t>(c);
             if (u8 >= 0x80) {
                 boost::io::ios_flags_saver ifs{res};
                 res << '%' << std::hex << std::setfill('0') << std::setw(2)
