@@ -54,7 +54,6 @@ HandlerPtr RouteTable::get_handler(ContextPtr context) const {
     boost::split(pieces, tmp_path, boost::is_any_of("/"));
 
     auto curr = root_;
-    auto method = static_cast<int>(context->get_method());
     for (const auto &piece : pieces) {
         // check if match plain text
         auto match_plain_text = curr->node_map.find(piece);
