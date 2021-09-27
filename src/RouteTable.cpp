@@ -55,6 +55,11 @@ HandlerPtr RouteTable::get_handler(ContextPtr context) const {
 
     auto curr = root_;
     for (const auto &piece : pieces) {
+        // skip empty pieces
+        if (piece.size() == 0) {
+            continue;
+        }
+
         // check if match plain text
         auto match_plain_text = curr->node_map.find(piece);
         if (match_plain_text != curr->node_map.end()) {
