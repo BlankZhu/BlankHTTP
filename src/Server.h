@@ -31,10 +31,12 @@ class Server {
     Server(Config &conf)
         : conf_(conf),
           router_(std::make_shared<Router>()),
-          ssl_ctx_(ssl::context::tls_server) {}
+          ssl_ctx_(ssl::context::tls_server),
+          initialized_(false) {}
     ~Server() = default;
 
    public:
+    void init();
     void run();
     void register_handler(const std::string &path, const http::verb &method,
                           HandlerPtr handler,
@@ -53,5 +55,6 @@ class Server {
     RouterPtr router_;
     Logger logger_;
     ssl::context ssl_ctx_;
+    bool initialized_;
 };
 };  // namespace blank
