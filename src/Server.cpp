@@ -1,8 +1,12 @@
 #include "Server.h"
 
 namespace blank {
-void Server::run() {
+void Server::init() {
     setup_logger();
+    initialized_ = true;
+}
+
+void Server::run() {
     logger_.info(fmt("running BlankHTTPServer with config: %1%") %
                  conf_.detail_in_json());
 
@@ -41,6 +45,12 @@ void Server::run() {
 void Server::register_handler(const std::string &path, const http::verb &method,
                               HandlerPtr handler,
                               bool enable_default_middlewares) {
+    if (initialized_) {
+        logger_.warning(
+            fmt("cannot register new handler once the server is initialized"));
+        return;
+    }
+
     if (enable_default_middlewares) {
         auto chain = std::make_shared<HandleChain>(handler, true);
         router_->add_handler(path, method, chain);
@@ -51,6 +61,12 @@ void Server::register_handler(const std::string &path, const http::verb &method,
 
 void Server::register_chain(const std::string &path, const http::verb &method,
                             HandleChainPtr chain) {
+    if (initialized_) {
+        logger_.warning(
+            fmt("cannot register new chain once the server is initialized"));
+        return;
+    }
+
     router_->add_handler(path, method, chain);
 }
 

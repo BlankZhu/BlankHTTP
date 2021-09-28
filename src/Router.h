@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <shared_mutex>
 
 #include <boost/beast/http.hpp>
 
@@ -25,8 +24,6 @@ class Router {
 
    private:
     RouteTable table_;
-    // todo: the Router could be lock-free after intialization
-    mutable std::shared_mutex mutex_;
 };
 
 using RouterPtr = std::shared_ptr<Router>;
