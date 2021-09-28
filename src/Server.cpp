@@ -4,9 +4,9 @@ namespace blank {
 void Server::run() {
     setup_logger();
     logger_.info(fmt("running BlankHTTPServer with config: %1%") %
-                 conf_.to_json_string());
+                 conf_.detail_in_json());
 
-    if (conf_.enable_ssl) {
+    if (conf_.get_enable_ssl()) {
         beast::error_code ec;
         setup_ssl_context(ec);
         if (ec) {
@@ -16,16 +16,16 @@ void Server::run() {
         }
     }
 
-    auto addr = net::ip::make_address(conf_.address);
-    auto ep = tcp::endpoint{addr, conf_.port};
+    auto addr = net::ip::make_address(conf_.get_address());
+    auto ep = tcp::endpoint{addr, conf_.get_port()};
 
-    net::io_context ioc{conf_.threads};
+    net::io_context ioc{static_cast<int>(conf_.get_threads())};
 
     net::spawn(ioc, std::bind(&Server::listen, this, std::ref(ioc), ep,
                               std::placeholders::_1));
 
     std::vector<std::thread> threads;
-    for (auto i = 0; i < conf_.threads - 1; i += 1) {
+    for (auto i = 0; i < conf_.get_threads() - 1; i += 1) {
         threads.emplace_back([&ioc] { ioc.run(); });
     }
     // block here
@@ -49,7 +49,7 @@ void Server::register_chain(const std::string &path, const http::verb &method,
 }
 
 void Server::setup_logger() {
-    logger_.init(conf_.log_level, conf_.log_filename);
+    logger_.init(conf_.get_log_level(), conf_.get_log_filename());
 }
 
 void Server::setup_ssl_context(beast::error_code &ec) {
@@ -58,11 +58,11 @@ void Server::setup_ssl_context(beast::error_code &ec) {
                          ssl::context::no_tlsv1 | ssl::context::no_tlsv1_1 |
                          ssl::context::single_dh_use);
 
-    ssl_ctx_.use_certificate_chain_file(conf_.cert_path, ec);
+    ssl_ctx_.use_certificate_chain_file(conf_.get_cert_path(), ec);
     if (ec) {
         return;
     }
-    ssl_ctx_.use_private_key_file(conf_.pri_key_path,
+    ssl_ctx_.use_private_key_file(conf_.get_pri_key_path(),
                                   ssl::context::file_format::pem, ec);
 
     return;
@@ -110,9 +110,9 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
             continue;
         }
 
-        std::chrono::seconds timeout{conf_.timeout};
+        std::chrono::seconds timeout{conf_.get_timeout()};
 
-        if (conf_.enable_ssl) {
+        if (conf_.get_enable_ssl()) {
             auto session = std::make_shared<SessionSSL>(
                 std::move(socket), std::ref(ssl_ctx_), timeout, router_);
             net::spawn(acceptor.get_executor(),
