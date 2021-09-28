@@ -11,7 +11,6 @@ Response DefaultMiddleware::handle_request(ContextPtr ctx, Request &&req) {
                      req.method_string() % req.target() %
                      upstream_duration.count());
 
-    resp.prepare_payload();
     return resp;
 }
 };  // namespace blank

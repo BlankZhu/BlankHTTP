@@ -7,6 +7,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/optional.hpp>
 
 #include "Context.h"
 #include "Logger.h"
@@ -20,6 +21,8 @@ namespace net = boost::asio;
 using tcp = boost::asio::ip::tcp;
 
 using Request = http::request<http::string_body>;
+using StringSerializer = http::response_serializer<http::string_body>;
+using FileSerializer = http::response_serializer<http::file_body>;
 
 class Session {
    public:
@@ -32,15 +35,16 @@ class Session {
     void handle_session(Logger &logger, net::yield_context yield);
 
    private:
-    bool write_string_response(Response resp, net::yield_context &yield,
-                               beast::error_code &ec);
-    bool write_file_response(Response resp, net::yield_context &yield,
-                             beast::error_code &ec);
+    bool write_response(Response &&resp, int http_version,
+                        net::yield_context &yield, beast::error_code &ec);
+    void reset_serializer();
 
    private:
     beast::tcp_stream stream_;
     const RouterPtr router_;
     std::chrono::seconds timeout_;
-    beast::flat_buffer buffer_;
+    beast::flat_buffer buffer_;  // TODO: to static buffer maybe
+    boost::optional<StringSerializer> string_serializer_;
+    boost::optional<FileSerializer> file_serializer_;
 };
 }  // namespace blank
