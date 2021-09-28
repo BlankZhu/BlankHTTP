@@ -30,16 +30,10 @@ void Server::run() {
 
     std::vector<std::thread> threads;
     for (auto i = 0; i < conf_.get_threads() - 1; i += 1) {
-        threads.emplace_back([&ioc] {
-            for (;;) {
-                ioc.poll();
-            }
-        });
+        threads.emplace_back([&ioc] { ioc.run(); });
     }
     // block here
-    for (;;) {
-        ioc.poll();
-    }
+    ioc.run();
 }
 
 void Server::register_handler(const std::string &path, const http::verb &method,

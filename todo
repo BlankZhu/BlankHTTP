@@ -1,5 +1,5 @@
 1. pre-allocated size of request/response from static pool
 2. emplace (move construct of request/response)
-3. spin (io_context::poll)
+3. spin (io_context::poll) (not necessary)
 4. request parser
 5. response serializer
