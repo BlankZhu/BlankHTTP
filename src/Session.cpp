@@ -54,7 +54,7 @@ bool Session::write_response(Response &&resp, int http_version,
         auto &resp_ref = resp.get_string_response_ref();
         resp_ref->prepare_payload();
         auto http_conn_close = resp_ref->need_eof();
-        string_serializer_.emplace(resp_ref);
+        string_serializer_.emplace(*resp_ref);
 
         stream_.expires_after(timeout_);
         http::async_write(stream_, *string_serializer_, yield[ec]);
@@ -64,10 +64,10 @@ bool Session::write_response(Response &&resp, int http_version,
         auto &resp_ref = resp.get_file_response_ref();
         resp_ref->prepare_payload();
         auto http_conn_close = resp_ref->need_eof();
-        string_serializer_.emplace(resp_ref);
+        file_serializer_.emplace(*resp_ref);
 
         stream_.expires_after(timeout_);
-        http::async_write(stream_, *string_serializer_, yield[ec]);
+        http::async_write(stream_, *file_serializer_, yield[ec]);
         return http_conn_close;
     }
 

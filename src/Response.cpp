@@ -3,11 +3,11 @@
 
 namespace blank {
 Response::Response(StringResponse&& response) {
-    set_string_response(std::move(response));
+    string_response_.emplace(std::move(response));
 }
 
 Response::Response(FileResponse&& response) {
-    set_file_response(std::move(response));
+    file_response_.emplace(std::move(response));
 }
 
 Response::Response(Response&& response) {
@@ -27,12 +27,12 @@ unsigned Response::get_status_code() const {
 }
 
 void Response::set_string_response(StringResponse&& response) {
-    string_response_.emplace(response);
+    string_response_.emplace(std::move(response));
     file_response_ = boost::none;
 }
 
 void Response::set_file_response(FileResponse&& response) {
-    file_response_.emplace(response);
+    file_response_.emplace(std::move(response));
     string_response_ = boost::none;
 }
 
