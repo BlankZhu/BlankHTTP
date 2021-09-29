@@ -16,8 +16,11 @@ void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
     while (true) {
         // read in the request
         beast::get_lowest_layer(stream_).expires_after(timeout_);
-        Request req;
-        http::async_read(stream_, buffer_, req, yield[ec]);
+
+        parser_.emplace(std::piecewise_construct, std::make_tuple(),
+                        std::make_tuple()  // std::make_tuple(allocator_))
+        );
+        http::async_read(stream_, buffer_, *parser_, yield[ec]);
         if (ec == http::error::end_of_stream) {
             break;
         }
@@ -26,6 +29,7 @@ void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
                          ec.message());
             return;
         }
+        Request req{std::move(parser_->get())};
 
         // handle request, generate response
         auto remote_endpoint =

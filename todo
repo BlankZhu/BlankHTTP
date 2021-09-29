@@ -1,2 +1,2 @@
-1. allocator for request/response & serializer (something like boost::pool::fast_pool_allocator)
-2. request parser
+1. static allocator for request/parser/response/serializer
+2. http parser

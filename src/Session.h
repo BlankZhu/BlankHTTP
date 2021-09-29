@@ -20,9 +20,12 @@ namespace http = boost::beast::http;
 namespace net = boost::asio;
 using tcp = boost::asio::ip::tcp;
 
-using Request = http::request<http::string_body>;
-using StringSerializer = http::response_serializer<http::string_body>;
-using FileSerializer = http::response_serializer<http::file_body>;
+using Request = http::request<http::string_body /*, Allocator */>;
+using Parser = http::request_parser<http::string_body /*, Allocator */>;
+using StringSerializer =
+    http::response_serializer<http::string_body /*, Allocator */>;
+using FileSerializer =
+    http::response_serializer<http::file_body /*, Allocator */>;
 
 class Session {
    public:
@@ -44,6 +47,7 @@ class Session {
     const RouterPtr router_;
     std::chrono::seconds timeout_;
     beast::flat_buffer buffer_;  // TODO: to static buffer maybe
+    boost::optional<Parser> parser_;
     boost::optional<StringSerializer> string_serializer_;
     boost::optional<FileSerializer> file_serializer_;
 };
