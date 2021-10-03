@@ -1,2 +1,1 @@
-1. static allocator for request/parser/response/serializer
-2. http parser
+1. asynchronize logger for DefaultMiddleware
