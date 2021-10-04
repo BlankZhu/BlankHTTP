@@ -1,53 +1,50 @@
 #include "Response.h"
+#include <boost/optional/optional_fwd.hpp>
 
 namespace blank {
-StringResponsePtr Response::get_string_response() const {
-    if (is_string_response_) {
-        return string_response_;
-    }
-    return nullptr;
-}
-void Response::set_string_response(StringResponsePtr resp) {
-    string_response_ = resp;
-    is_string_response_ = true;
-    file_response_ = nullptr;
-    is_file_response_ = false;
-}
-FileResponsePtr Response::get_file_response() const {
-    if (is_file_response_) {
-        return file_response_;
-    }
-    return nullptr;
-}
-void Response::set_file_response(FileResponsePtr resp) {
-    file_response_ = resp;
-    is_file_response_ = true;
-    string_response_ = nullptr;
-    is_string_response_ = false;
+Response::Response(StringResponse&& response) {
+    string_response_.emplace(std::move(response));
 }
 
-bool Response::is_string_response() const { return is_string_response_; }
+Response::Response(FileResponse&& response) {
+    file_response_.emplace(std::move(response));
+}
 
-bool Response::is_file_response() const { return is_file_response_; }
-
-void Response::prepare_payload() {
-    if (file_response_ != nullptr) {
-        file_response_->prepare_payload();
-        return;
-    }
-    if (string_response_ != nullptr) {
-        string_response_->prepare_payload();
-        return;
-    }
+Response::Response(Response&& response) {
+    string_response_ = std::move(response.string_response_);
+    file_response_ = std::move(response.file_response_);
+    // no need to move serializers
 }
 
 unsigned Response::get_status_code() const {
-    if (file_response_ != nullptr) {
-        return file_response_->result_int();
-    }
-    if (string_response_ != nullptr) {
+    if (string_response_.has_value()) {
         return string_response_->result_int();
+    }
+    if (file_response_.has_value()) {
+        return file_response_->result_int();
     }
     return static_cast<unsigned>(http::status::internal_server_error);
 }
-};  // namespace blank
+
+void Response::set_string_response(StringResponse&& response) {
+    string_response_.emplace(std::move(response));
+    file_response_ = boost::none;
+}
+
+void Response::set_file_response(FileResponse&& response) {
+    file_response_.emplace(std::move(response));
+    string_response_ = boost::none;
+}
+
+boost::optional<StringResponse>& Response::get_string_response_ref() {
+    return string_response_;
+}
+
+boost::optional<FileResponse>& Response::get_file_response_ref() {
+    return file_response_;
+}
+
+bool Response::is_string_response() { return string_response_.has_value(); }
+
+bool Response::is_file_response() { return file_response_.has_value(); }
+}  // namespace blank

@@ -1,45 +1,41 @@
 #pragma once
 
-#include <memory>
-
-#include <boost/beast.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/beast/http/file_body.hpp>
+#include <boost/beast/http/message.hpp>
+#include <boost/beast/http/serializer.hpp>
+#include <boost/beast/http/string_body.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/pool/detail/mutex.hpp>
 
 namespace blank {
 namespace http = boost::beast::http;
+
 using StringResponse = http::response<http::string_body>;
 using FileResponse = http::response<http::file_body>;
-using StringResponsePtr = std::shared_ptr<http::response<http::string_body>>;
-using FileResponsePtr = std::shared_ptr<http::response<http::file_body>>;
 
 class Response {
    public:
-    Response(StringResponsePtr resp)
-        : is_string_response_(true),
-          is_file_response_(false),
-          string_response_(resp),
-          file_response_(nullptr) {}
-    Response(FileResponsePtr resp)
-        : is_string_response_(false),
-          is_file_response_(true),
-          string_response_(nullptr),
-          file_response_(resp) {}
+    Response() = default;
+    Response(StringResponse&& response);
+    Response(FileResponse&& response);
+    Response(Response&& response);
+    Response(Response& response) = delete;
     ~Response() = default;
 
    public:
-    StringResponsePtr get_string_response() const;
-    void set_string_response(StringResponsePtr resp);
-    FileResponsePtr get_file_response() const;
-    void set_file_response(FileResponsePtr resp);
-    bool is_string_response() const;
-    bool is_file_response() const;
-    void prepare_payload();
     unsigned get_status_code() const;
+    // getters & setters
+    void set_string_response(StringResponse&& response);
+    void set_file_response(FileResponse&& response);
+    boost::optional<StringResponse>& get_string_response_ref();
+    boost::optional<FileResponse>& get_file_response_ref();
+    bool is_string_response();
+    bool is_file_response();
 
    private:
-    bool is_string_response_;
-    bool is_file_response_;
-    StringResponsePtr string_response_;
-    FileResponsePtr file_response_;
+    boost::optional<StringResponse> string_response_;
+    boost::optional<FileResponse> file_response_;
 };
+
 };  // namespace blank

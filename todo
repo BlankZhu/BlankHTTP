@@ -1,0 +1,2 @@
+1. optimize logger for DefaultMiddleware (improve logging performance)
+2. add request/response header/body limits
