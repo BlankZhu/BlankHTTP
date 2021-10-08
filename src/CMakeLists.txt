@@ -1,11 +1,13 @@
 add_library(blankhttp SHARED
+    AsyncLogger.cpp
+    Client.ipp
+    ClientSSL.ipp
     Config.cpp
     Context.cpp
+    CoreLogger.cpp
     DefaultMiddleware.cpp
     HandleChain.cpp
     Handler.cpp
-    Client.ipp
-    ClientSSL.ipp
     Logger.cpp
     Middleware.cpp
     RequestTarget.cpp
@@ -15,19 +17,23 @@ add_library(blankhttp SHARED
     Server.cpp
     Session.cpp
     SessionSSL.cpp
+    SyncLogger.cpp
     Utility.cpp
 )
 
 set (BLANK_HTTP_HEADERS
+    AsyncLogger.h
+    Client.hpp
+    ClientSSL.hpp
     Config.h
     Constant.h
     Context.h
+    CoreLogger.h
     DefaultMiddleware.h
     HandleChain.h
     Handler.h
-    Client.hpp
-    ClientSSL.hpp
     Logger.h
+    LoggerInterface.h
     Middleware.h
     RequestTarget.h
     Response.h
@@ -36,6 +42,7 @@ set (BLANK_HTTP_HEADERS
     Server.h
     Session.h
     SessionSSL.h
+    SyncLogger.h
     Utility.h
 )
 
