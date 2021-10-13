@@ -1,7 +1,5 @@
 #pragma once
 
-#define BOOST_LOG_DYN_LINK 1
-
 #include "LoggerInterface.h"
 
 namespace blank {
