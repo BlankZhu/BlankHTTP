@@ -8,7 +8,6 @@ add_library(blankhttp SHARED
     DefaultMiddleware.cpp
     HandleChain.cpp
     Handler.cpp
-    Logger.cpp
     Middleware.cpp
     RequestTarget.cpp
     Response.cpp
@@ -32,7 +31,6 @@ set (BLANK_HTTP_HEADERS
     DefaultMiddleware.h
     HandleChain.h
     Handler.h
-    Logger.h
     LoggerInterface.h
     Middleware.h
     RequestTarget.h

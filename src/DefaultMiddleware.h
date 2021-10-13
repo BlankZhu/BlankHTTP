@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "Handler.h"
-#include "Logger.h"
+#include "LoggerInterface.h"
 #include "Middleware.h"
 #include "Response.h"
 

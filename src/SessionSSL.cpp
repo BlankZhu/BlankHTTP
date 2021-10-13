@@ -1,15 +1,16 @@
 #include "SessionSSL.h"
 
 namespace blank {
-void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
+void SessionSSL::handle_session(LoggerInterfacePtr &logger,
+                                net::yield_context yield) {
     beast::error_code ec;
 
     // perform ssl handshake
     beast::get_lowest_layer(stream_).expires_after(timeout_);
     stream_.async_handshake(ssl::stream_base::server, yield[ec]);
     if (ec) {
-        logger.error(fmt("failed to perform SSL handshake, detail: [%1%]") %
-                     ec.message());
+        logger->error(fmt("failed to perform SSL handshake, detail: [%1%]") %
+                      ec.message());
         return;
     }
 
@@ -25,8 +26,8 @@ void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
             break;
         }
         if (ec) {
-            logger.error(fmt("failed to read HTTP request, detail: [%1%]") %
-                         ec.message());
+            logger->error(fmt("failed to read HTTP request, detail: [%1%]") %
+                          ec.message());
             return;
         }
         Request req{std::move(parser_->get())};
@@ -52,8 +53,8 @@ void SessionSSL::handle_session(Logger &logger, net::yield_context yield) {
         reset_serializer();
 
         if (ec) {
-            logger.error(fmt("failed to write HTTP response, detail: [%1%]") %
-                         ec.message());
+            logger->error(fmt("failed to write HTTP response, detail: [%1%]") %
+                          ec.message());
             return;
         }
         if (http_conn_closed) {

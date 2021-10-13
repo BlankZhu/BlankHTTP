@@ -1,5 +1,6 @@
 #include "CoreLogger.h"
 
+namespace blank {
 CoreLogger::~CoreLogger() {
   auto core = logging::core::get();
   core->flush();
@@ -31,5 +32,6 @@ void CoreLogger::set_file_log(const std::string &log_filename) {
 
 void CoreLogger::do_logging(const fmt &formatted,
                             trivial::severity_level level) {
-  BOOST_LOG_SEV(logger_, level);
+  BOOST_LOG_SEV(logger_, level) << formatted;
 }
+}  // namespace blank

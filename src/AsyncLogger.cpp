@@ -1,5 +1,6 @@
 #include "AsyncLogger.h"
 
+namespace blank {
 AsyncLogger::~AsyncLogger() {
   auto core = logging::core::get();
 
@@ -30,7 +31,6 @@ void AsyncLogger::init(int log_level, const std::string &log_filename) {
 }
 
 void AsyncLogger::set_os_log() {
-  using sync_os_sink_t = sinks::asynchronous_sink<sinks::text_ostream_backend>;
   auto core = logging::core::get();
 
   // create a backend to console
@@ -39,7 +39,7 @@ void AsyncLogger::set_os_log() {
       boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
 
   // wrap it into the frontend and register in the core
-  boost::shared_ptr<sync_os_sink_t> sink(new sync_os_sink_t(backend));
+  boost::shared_ptr<async_os_sink_t> sink(new async_os_sink_t(backend));
   os_sink_ = sink;
   core->add_sink(sink);
 
@@ -53,7 +53,6 @@ void AsyncLogger::set_os_log() {
 }
 
 void AsyncLogger::set_file_log(const std::string &log_filename) {
-  using sync_file_sink_t = sinks::asynchronous_sink<sinks::text_file_backend>;
   auto core = logging::core::get();
 
   // create a backend to console
@@ -63,7 +62,7 @@ void AsyncLogger::set_file_log(const std::string &log_filename) {
       sinks::file::rotation_at_time_point(0, 0, 0));
 
   // wrap it into the frontend and register in the core
-  boost::shared_ptr<sync_file_sink_t> sink(new sync_file_sink_t(backend));
+  boost::shared_ptr<async_file_sink_t> sink(new async_file_sink_t(backend));
   file_sink_ = sink;
   core->add_sink(sink);
 
@@ -78,5 +77,6 @@ void AsyncLogger::set_file_log(const std::string &log_filename) {
 
 void AsyncLogger::do_logging(const fmt &formatted,
                              trivial::severity_level level) {
-  BOOST_LOG_SEV(logger_, level);
+  BOOST_LOG_SEV(logger_, level) << formatted;
 }
+}  // namespace blank

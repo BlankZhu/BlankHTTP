@@ -10,7 +10,7 @@
 #include <boost/beast/ssl.hpp>
 
 #include "Context.h"
-#include "Logger.h"
+#include "LoggerInterface.h"
 #include "RequestTarget.h"
 #include "Router.h"
 
@@ -38,7 +38,7 @@ class SessionSSL {
     ~SessionSSL() = default;
 
    public:
-    void handle_session(Logger &logger, net::yield_context yield);
+    void handle_session(LoggerInterfacePtr &logger, net::yield_context yield);
 
    private:
     bool write_response(Response &&resp, int http_version,

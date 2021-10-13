@@ -1,5 +1,7 @@
 #include "SyncLogger.h"
 
+namespace blank {
+
 SyncLogger::~SyncLogger() {
   auto core = logging::core::get();
 
@@ -74,5 +76,6 @@ void SyncLogger::set_file_log(const std::string &log_filename) {
 
 void SyncLogger::do_logging(const fmt &formatted,
                             trivial::severity_level level) {
-  BOOST_LOG_SEV(logger_, level);
+  BOOST_LOG_SEV(logger_, level) << formatted;
 }
+}  // namespace blank

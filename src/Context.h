@@ -8,7 +8,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/http.hpp>
 
-#include "Logger.h"
+#include "LoggerInterface.h"
 #include "RequestTarget.h"
 
 namespace blank {
@@ -21,7 +21,7 @@ class Context {
    public:
     Context(tcp::endpoint endpoint, RequestTargetPtr target,
             const http::verb &method, net::any_io_executor executor,
-            net::yield_context &yield, Logger &logger)
+            net::yield_context &yield, LoggerInterfacePtr &logger)
         : remote_endpoint_(endpoint),
           request_target_(target),
           request_method_(method),
@@ -49,7 +49,7 @@ class Context {
     net::yield_context &yield_;
 
    public:
-    Logger &logger;
+    LoggerInterfacePtr &logger;
 };
 
 using ContextPtr = std::shared_ptr<Context>;

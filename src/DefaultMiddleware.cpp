@@ -7,9 +7,9 @@ Response DefaultMiddleware::handle_request(ContextPtr ctx, Request &&req) {
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<float> upstream_duration = end - start;
 
-    ctx->logger.info(fmt("[%1%] [%2%] [%3%] [%4%]") % resp.get_status_code() %
-                     req.method_string() % req.target() %
-                     upstream_duration.count());
+    ctx->logger->info(fmt("[%1%] [%2%] [%3%] [%4%]") % resp.get_status_code() %
+                      req.method_string() % req.target() %
+                      upstream_duration.count());
 
     return resp;
 }

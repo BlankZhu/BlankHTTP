@@ -1,7 +1,8 @@
 #include "Session.h"
 
 namespace blank {
-void Session::handle_session(Logger &logger, net::yield_context yield) {
+void Session::handle_session(LoggerInterfacePtr &logger,
+                             net::yield_context yield) {
     beast::error_code ec;
 
     while (true) {
@@ -16,8 +17,8 @@ void Session::handle_session(Logger &logger, net::yield_context yield) {
             break;
         }
         if (ec) {
-            logger.error(fmt("failed to read HTTP request, detail: [%1%]") %
-                         ec.message());
+            logger->error(fmt("failed to read HTTP request, detail: [%1%]") %
+                          ec.message());
             return;
         }
         Request req{std::move(parser_->get())};
@@ -40,8 +41,8 @@ void Session::handle_session(Logger &logger, net::yield_context yield) {
             write_response(std::move(resp), req.version(), yield, ec);
         reset_serializer();
         if (ec) {
-            logger.error(fmt("failed to write HTTP response, detail: [%1%]") %
-                         ec.message());
+            logger->error(fmt("failed to write HTTP response, detail: [%1%]") %
+                          ec.message());
             return;
         }
         if (http_conn_closed) {
