@@ -65,5 +65,5 @@ class LoggerInterface {
 };
 using LoggerInterfacePtr = std::shared_ptr<LoggerInterface>;
 
-enum LoggerType { Core, Async, Sync };
+enum LoggerType { Async, Sync };
 }  // namespace blank

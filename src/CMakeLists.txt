@@ -6,7 +6,6 @@ add_library(blankhttp SHARED
     ClientSSL.ipp
     Config.cpp
     Context.cpp
-    CoreLogger.cpp
     DefaultMiddleware.cpp
     HandleChain.cpp
     Handler.cpp
@@ -29,7 +28,6 @@ set (BLANK_HTTP_HEADERS
     Config.h
     Constant.h
     Context.h
-    CoreLogger.h
     DefaultMiddleware.h
     HandleChain.h
     Handler.h

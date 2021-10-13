@@ -13,7 +13,6 @@
 
 #include "AsyncLogger.h"
 #include "Config.h"
-#include "CoreLogger.h"
 #include "HandleChain.h"
 #include "Handler.h"
 #include "Router.h"
@@ -38,7 +37,7 @@ class Server {
   ~Server() = default;
 
  public:
-  void init(LoggerType type = LoggerType::Core);
+  void init(LoggerType type = LoggerType::Async);
   void run();
   void register_handler(const std::string &path, const http::verb &method,
                         HandlerPtr handler,
