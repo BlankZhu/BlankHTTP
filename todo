@@ -1,2 +1,2 @@
-1. optimize logger for DefaultMiddleware (improve logging performance)
-2. add request/response header/body limits
+1. add request/response header/body limits
+2. pass outter io_context into Server

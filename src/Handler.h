@@ -16,19 +16,19 @@ namespace http = boost::beast::http;
 using Request = http::request<http::string_body>;
 
 class Handler {
-   public:
-    Handler() = default;
-    virtual ~Handler() = default;
+ public:
+  Handler() = default;
+  virtual ~Handler() = default;
 
-   public:
-    std::any get_extra_data() const;
-    void set_extra_data(const std::any &data);
+ public:
+  std::any get_extra_data() const;
+  void set_extra_data(const std::any &data);
 
-    virtual Response handle_request(ContextPtr ctx, Request &&req);
+  virtual Response handle_request(ContextPtr ctx, Request &&req);
 
-   private:
-    Response base_not_found(ContextPtr ctx, Request &&req);
-    std::any extra_data_;
+ private:
+  Response base_not_found(ContextPtr ctx, Request &&req);
+  std::any extra_data_;
 };
 
 using HandlerPtr = std::shared_ptr<Handler>;

@@ -10,7 +10,7 @@
 #include <boost/optional.hpp>
 
 #include "Context.h"
-#include "Logger.h"
+#include "LoggerInterface.h"
 #include "RequestTarget.h"
 #include "Router.h"
 
@@ -28,27 +28,27 @@ using FileSerializer =
     http::response_serializer<http::file_body /*, Allocator */>;
 
 class Session {
-   public:
-    Session(tcp::socket &&socket, const std::chrono::seconds timeout,
-            const RouterPtr router)
-        : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
-    ~Session() = default;
+ public:
+  Session(tcp::socket &&socket, const std::chrono::seconds timeout,
+          const RouterPtr router)
+      : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
+  ~Session() = default;
 
-   public:
-    void handle_session(Logger &logger, net::yield_context yield);
+ public:
+  void handle_session(LoggerInterfacePtr &logger, net::yield_context yield);
 
-   private:
-    bool write_response(Response &&resp, int http_version,
-                        net::yield_context &yield, beast::error_code &ec);
-    void reset_serializer();
+ private:
+  bool write_response(Response &&resp, int http_version,
+                      net::yield_context &yield, beast::error_code &ec);
+  void reset_serializer();
 
-   private:
-    beast::tcp_stream stream_;
-    const RouterPtr router_;
-    std::chrono::seconds timeout_;
-    beast::flat_buffer buffer_;  // TODO: to static buffer maybe
-    boost::optional<Parser> parser_;
-    boost::optional<StringSerializer> string_serializer_;
-    boost::optional<FileSerializer> file_serializer_;
+ private:
+  beast::tcp_stream stream_;
+  const RouterPtr router_;
+  std::chrono::seconds timeout_;
+  beast::flat_buffer buffer_;  // TODO: to static buffer maybe
+  boost::optional<Parser> parser_;
+  boost::optional<StringSerializer> string_serializer_;
+  boost::optional<FileSerializer> file_serializer_;
 };
 }  // namespace blank

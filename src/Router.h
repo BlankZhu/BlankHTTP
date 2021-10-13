@@ -13,17 +13,17 @@ namespace blank {
 namespace http = boost::beast::http;
 
 class Router {
-   public:
-    Router() = default;
-    ~Router() = default;
+ public:
+  Router() = default;
+  ~Router() = default;
 
-   public:
-    void add_handler(const std::string &path, const http::verb &method,
-                     HandlerPtr handler);
-    HandlerPtr get_handler(ContextPtr context) const;
+ public:
+  void add_handler(const std::string &path, const http::verb &method,
+                   HandlerPtr handler);
+  HandlerPtr get_handler(ContextPtr context) const;
 
-   private:
-    RouteTable table_;
+ private:
+  RouteTable table_;
 };
 
 using RouterPtr = std::shared_ptr<Router>;
