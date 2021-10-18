@@ -1,4 +1,5 @@
 #include "Server.h"
+#include <boost/asio/io_context.hpp>
 
 namespace blank {
 void Server::init(LoggerType type) {
@@ -7,6 +8,11 @@ void Server::init(LoggerType type) {
 }
 
 void Server::run() {
+  net::io_context ioc{static_cast<int>(conf_.get_threads())};
+  run(ioc);
+}
+
+void Server::run(net::io_context &ioc) {
   logger_->info(fmt("running BlankHTTPServer with config: %1%") %
                 conf_.detail_in_json());
 
@@ -21,9 +27,7 @@ void Server::run() {
 
   auto addr = net::ip::make_address(conf_.get_address());
   auto ep = tcp::endpoint{addr, conf_.get_port()};
-
-  net::io_context ioc{static_cast<int>(conf_.get_threads())};
-
+  
   net::spawn(ioc, std::bind(&Server::listen, this, std::ref(ioc), ep,
                             std::placeholders::_1));
 
