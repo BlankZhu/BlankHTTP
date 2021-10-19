@@ -33,6 +33,8 @@ class Config {
   std::uint64_t get_request_body_limit() const;
   std::uint64_t get_response_header_limit() const;
   std::uint64_t get_response_body_limit() const;
+  bool get_enable_spin() const;
+
   void set_log_level(int log_level);
   void set_threads(unsigned int threads);
   void set_address(const std::string& address);
@@ -46,6 +48,7 @@ class Config {
   void set_request_body_limit(std::uint64_t limit);
   void set_response_header_limit(std::uint64_t limit);
   void set_response_body_limit(std::uint64_t limit);
+  void set_enable_spin(bool enable_spin);
 
  private:
   std::optional<int> log_level_;
@@ -61,6 +64,7 @@ class Config {
   std::optional<std::uint64_t> request_body_limit_;
   std::optional<std::uint64_t> response_header_limit_;
   std::optional<std::uint64_t> response_body_limit_;
+  std::optional<bool> enable_spin_;
 };
 
 using ConfigPtr = std::shared_ptr<Config>;

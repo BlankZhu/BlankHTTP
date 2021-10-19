@@ -66,6 +66,10 @@ std::uint64_t Config::get_response_body_limit() const {
   return response_body_limit_.value_or(constant::k_default_response_body_limit);
 }
 
+bool Config::get_enable_spin() const {
+  return enable_spin_.value_or(constant::k_default_enable_spin);
+}
+
 void Config::set_log_level(int log_level) { log_level_ = log_level; }
 
 void Config::set_threads(unsigned int threads) { threads_ = threads; }
@@ -105,6 +109,10 @@ void Config::set_response_body_limit(std::uint64_t limit) {
   response_body_limit_ = limit;
 }
 
+void Config::set_enable_spin(bool enable_spin) {
+  enable_spin_ = enable_spin;
+}
+
 std::string Config::detail_in_json() const {
   namespace json = boost::json;
   json::object obj{};
@@ -122,6 +130,7 @@ std::string Config::detail_in_json() const {
   obj["request_body_limit"] = get_request_body_limit();
   obj["response_header_limit"] = get_response_header_limit();
   obj["response_body_limit"] = get_response_body_limit();
+  obj["enable_spin"] = get_enable_spin();
 
   return json::serialize(obj);
 }

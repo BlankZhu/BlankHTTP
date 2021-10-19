@@ -1,5 +1,6 @@
 #include "Server.h"
 #include <boost/asio/io_context.hpp>
+#include <functional>
 
 namespace blank {
 void Server::init(LoggerType type) {
@@ -27,22 +28,31 @@ void Server::run(net::io_context &ioc) {
 
   auto addr = net::ip::make_address(conf_.get_address());
   auto ep = tcp::endpoint{addr, conf_.get_port()};
-  
+
   net::spawn(ioc, std::bind(&Server::listen, this, std::ref(ioc), ep,
                             std::placeholders::_1));
 
   std::vector<std::thread> threads;
+  std::function<void(net::io_context &)> ioc_run_func;
+  std::function<void(net::io_context &)> ioc_block = [](net::io_context &ioc) {
+    ioc.run();
+  };
+  std::function<void(net::io_context &)> ioc_spin = [](net::io_context &ioc) {
+    while (true) {
+      ioc.poll();
+    }
+  };
+
+  if (conf_.get_enable_spin()) {
+    ioc_run_func = ioc_spin;
+  } else {
+    ioc_run_func = ioc_block;
+  }
+
   for (auto i = 0; i < conf_.get_threads() - 1; i += 1) {
-    threads.emplace_back([&ioc] {
-      while (true) {
-        ioc.poll();
-      }
-    });
+    threads.emplace_back([&ioc, &ioc_run_func]() { ioc_run_func(ioc); });
   }
-  // block here
-  while (true) {
-    ioc.poll();
-  }
+  ioc_run_func(ioc);
 }
 
 void Server::register_handler(const std::string &path, const http::verb &method,
