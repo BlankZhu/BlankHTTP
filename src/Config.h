@@ -31,8 +31,8 @@ class Config {
   std::string get_pri_key_path() const;
   std::uint64_t get_request_header_limit() const;
   std::uint64_t get_request_body_limit() const;
-  std::uint64_t get_response_header_limit() const;
-  std::uint64_t get_response_body_limit() const;
+  // std::uint64_t get_response_header_limit() const;
+  // std::uint64_t get_response_body_limit() const;
   bool get_enable_spin() const;
 
   void set_log_level(int log_level);

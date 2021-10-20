@@ -11,10 +11,10 @@ constexpr char const *k_mime_html = "text/html";
 constexpr char const *k_mime_txt = "text/plain";
 constexpr char const *k_mime_json = "application/json";
 
-const std::uint64_t k_default_request_header_limit = 8 * 1024;   // 8 KB
-const std::uint64_t k_default_request_body_limit = 64 * 1024;    // 64 KB
-const std::uint64_t k_default_response_header_limit = 8 * 1024;  // 8 KB
-const std::uint64_t k_default_response_body_limit = 64 * 1024;   // 64 KB
+const std::uint32_t k_default_request_header_limit = 8 * 1024;  // 8 KB
+const std::uint64_t k_default_request_body_limit = 64 * 1024;   // 64 KB
+// const std::uint32_t k_default_response_header_limit = 8 * 1024;  // 8 KB
+// const std::uint32_t k_default_response_body_limit = 64 * 1024;   // 64 KB
 
 const int k_default_log_level = 1;  // debug
 constexpr char const *k_default_bind_address = "0.0.0.0";

@@ -31,10 +31,16 @@ using FileSerializer =
 class SessionSSL {
  public:
   SessionSSL(tcp::socket &&socket, ssl::context &ssl_ctx,
-             const std::chrono::seconds timeout, const RouterPtr router)
+             const std::chrono::seconds timeout, const RouterPtr router,
+             const std::uint32_t &request_header_limit =
+                 constant::k_default_request_header_limit,
+             const std::uint64_t &request_body_limit =
+                 constant::k_default_request_body_limit)
       : stream_(std::move(socket), ssl_ctx),
         router_(router),
-        timeout_(timeout) {}
+        timeout_(timeout),
+        request_header_limit_(request_header_limit),
+        request_body_limit_(request_body_limit) {}
   ~SessionSSL() = default;
 
  public:
@@ -51,6 +57,8 @@ class SessionSSL {
   std::chrono::seconds timeout_;
   beast::flat_buffer buffer_;  // TODO: to static buffer maybe
   boost::optional<Parser> parser_;
+  const std::uint32_t &request_header_limit_;
+  const std::uint64_t &request_body_limit_;
   boost::optional<StringSerializer> string_serializer_;
   boost::optional<FileSerializer> file_serializer_;
 };

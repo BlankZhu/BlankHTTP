@@ -12,6 +12,8 @@ void Session::handle_session(LoggerInterfacePtr &logger,
     parser_.emplace(std::piecewise_construct, std::make_tuple(),
                     std::make_tuple()  // std::make_tuple(allocator_))
     );
+    parser_->header_limit(request_header_limit_);
+    parser_->body_limit(request_body_limit_);
     http::async_read(stream_, buffer_, *parser_, yield[ec]);
     if (ec == http::error::end_of_stream) {
       break;

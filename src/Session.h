@@ -9,6 +9,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/optional.hpp>
 
+#include "Constant.h"
 #include "Context.h"
 #include "LoggerInterface.h"
 #include "RequestTarget.h"
@@ -30,8 +31,16 @@ using FileSerializer =
 class Session {
  public:
   Session(tcp::socket &&socket, const std::chrono::seconds timeout,
-          const RouterPtr router)
-      : stream_(std::move(socket)), router_(router), timeout_(timeout) {}
+          const RouterPtr router,
+          const std::uint32_t &request_header_limit =
+              constant::k_default_request_header_limit,
+          const std::uint64_t &request_body_limit =
+              constant::k_default_request_body_limit)
+      : stream_(std::move(socket)),
+        router_(router),
+        timeout_(timeout),
+        request_header_limit_(request_header_limit),
+        request_body_limit_(request_body_limit) {}
   ~Session() = default;
 
  public:
@@ -48,6 +57,8 @@ class Session {
   std::chrono::seconds timeout_;
   beast::flat_buffer buffer_;  // TODO: to static buffer maybe
   boost::optional<Parser> parser_;
+  const std::uint32_t &request_header_limit_;
+  const std::uint64_t &request_body_limit_;
   boost::optional<StringSerializer> string_serializer_;
   boost::optional<FileSerializer> file_serializer_;
 };
