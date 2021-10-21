@@ -2,8 +2,6 @@ add_compile_options(-DBOOST_LOG_DYN_LINK)
 
 add_library(blankhttp SHARED
     AsyncLogger.cpp
-    Client.ipp
-    ClientSSL.ipp
     Config.cpp
     Context.cpp
     DefaultMiddleware.cpp
