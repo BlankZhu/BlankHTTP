@@ -46,7 +46,7 @@ std::string Config::get_pri_key_path() const {
   return pri_key_path_.value_or("");
 }
 
-std::uint64_t Config::get_request_header_limit() const {
+std::uint32_t Config::get_request_header_limit() const {
   return request_header_limit_.value_or(
       constant::k_default_request_header_limit);
 }
@@ -54,16 +54,6 @@ std::uint64_t Config::get_request_header_limit() const {
 std::uint64_t Config::get_request_body_limit() const {
   return request_body_limit_.value_or(constant::k_default_request_body_limit);
 }
-
-// std::uint64_t Config::get_response_header_limit() const {
-//   return response_header_limit_.value_or(
-//       constant::k_default_response_header_limit);
-// }
-
-// std::uint64_t Config::get_response_body_limit() const {
-//   return
-//   response_body_limit_.value_or(constant::k_default_response_body_limit);
-// }
 
 bool Config::get_enable_spin() const {
   return enable_spin_.value_or(constant::k_default_enable_spin);
@@ -92,20 +82,12 @@ void Config::set_pri_key_path(const std::string& pri_key_path) {
   pri_key_path_ = pri_key_path;
 }
 
-void Config::set_request_header_limit(std::uint64_t limit) {
+void Config::set_request_header_limit(std::uint32_t limit) {
   request_header_limit_ = limit;
 }
 
 void Config::set_request_body_limit(std::uint64_t limit) {
   request_body_limit_ = limit;
-}
-
-void Config::set_response_header_limit(std::uint64_t limit) {
-  response_header_limit_ = limit;
-}
-
-void Config::set_response_body_limit(std::uint64_t limit) {
-  response_body_limit_ = limit;
 }
 
 void Config::set_enable_spin(bool enable_spin) { enable_spin_ = enable_spin; }
@@ -125,8 +107,6 @@ std::string Config::detail_in_json() const {
   obj["pri_key_path"] = get_pri_key_path();
   obj["request_header_limit"] = get_request_header_limit();
   obj["request_body_limit"] = get_request_body_limit();
-  // obj["response_header_limit"] = get_response_header_limit();
-  // obj["response_body_limit"] = get_response_body_limit();
   obj["enable_spin"] = get_enable_spin();
 
   return json::serialize(obj);

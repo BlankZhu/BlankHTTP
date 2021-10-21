@@ -153,13 +153,15 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
 
     if (conf_.get_enable_ssl()) {
       auto session = std::make_shared<SessionSSL>(
-          std::move(socket), std::ref(ssl_ctx_), timeout, router_);
+          std::move(socket), std::ref(ssl_ctx_), timeout, router_,
+          conf_.get_request_header_limit(), conf_.get_request_body_limit());
       net::spawn(acceptor.get_executor(),
                  std::bind(&SessionSSL::handle_session, session, logger_,
                            std::placeholders::_1));
     } else {
-      auto session =
-          std::make_shared<Session>(std::move(socket), timeout, router_);
+      auto session = std::make_shared<Session>(
+          std::move(socket), timeout, router_, conf_.get_request_header_limit(),
+          conf_.get_request_body_limit());
       net::spawn(acceptor.get_executor(),
                  std::bind(&Session::handle_session, session, logger_,
                            std::placeholders::_1));
