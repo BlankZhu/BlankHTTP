@@ -1,5 +1,6 @@
 #pragma once
 
+#include <any>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -31,8 +32,10 @@ class Context {
   ~Context() = default;
 
  public:
-  void set_param(const std::string &key, const std::string &value);
+  std::any get_shared_data() const;
+  void set_shared_data(const std::any &data);
   std::string get_param(const std::string &key) const;
+  void set_param(const std::string &key, const std::string &value);
   std::string get_path() const;
   std::string get_query() const;
   std::vector<std::string> get_query(const std::string &key) const;
@@ -42,6 +45,7 @@ class Context {
   net::yield_context &get_yield_context();
 
  private:
+  std::any shared_data_;
   Param param_;
   tcp::endpoint remote_endpoint_;
   RequestTargetPtr request_target_;

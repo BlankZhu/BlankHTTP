@@ -1,6 +1,10 @@
 #include "Context.h"
 
 namespace blank {
+std::any Context::get_shared_data() const { return shared_data_; }
+
+void Context::set_shared_data(const std::any &data) { shared_data_ = data; }
+
 void Context::set_param(const std::string &key, const std::string &value) {
   param_.insert_or_assign(key, value);
 }
