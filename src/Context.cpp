@@ -15,6 +15,8 @@ std::string Context::get_param(const std::string &key) const {
 
 std::string Context::get_path() const { return request_target_->get_path(); }
 
+std::string Context::get_query() const { return request_target_->get_query(); }
+
 std::vector<std::string> Context::get_query(const std::string &key) const {
   return request_target_->get_query(key);
 }

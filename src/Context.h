@@ -34,6 +34,7 @@ class Context {
   void set_param(const std::string &key, const std::string &value);
   std::string get_param(const std::string &key) const;
   std::string get_path() const;
+  std::string get_query() const;
   std::vector<std::string> get_query(const std::string &key) const;
   std::string get_fragment() const;
   http::verb get_method() const;
