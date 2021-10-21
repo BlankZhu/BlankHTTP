@@ -1,4 +1,6 @@
 #include "Server.h"
+#include <boost/asio/io_context.hpp>
+#include <functional>
 
 namespace blank {
 void Server::init(LoggerType type) {
@@ -7,6 +9,11 @@ void Server::init(LoggerType type) {
 }
 
 void Server::run() {
+  net::io_context ioc{static_cast<int>(conf_.get_threads())};
+  run(ioc);
+}
+
+void Server::run(net::io_context &ioc) {
   logger_->info(fmt("running BlankHTTPServer with config: %1%") %
                 conf_.detail_in_json());
 
@@ -22,23 +29,30 @@ void Server::run() {
   auto addr = net::ip::make_address(conf_.get_address());
   auto ep = tcp::endpoint{addr, conf_.get_port()};
 
-  net::io_context ioc{static_cast<int>(conf_.get_threads())};
-
   net::spawn(ioc, std::bind(&Server::listen, this, std::ref(ioc), ep,
                             std::placeholders::_1));
 
   std::vector<std::thread> threads;
+  std::function<void(net::io_context &)> ioc_run_func;
+  std::function<void(net::io_context &)> ioc_block = [](net::io_context &ioc) {
+    ioc.run();
+  };
+  std::function<void(net::io_context &)> ioc_spin = [](net::io_context &ioc) {
+    while (true) {
+      ioc.poll();
+    }
+  };
+
+  if (conf_.get_enable_spin()) {
+    ioc_run_func = ioc_spin;
+  } else {
+    ioc_run_func = ioc_block;
+  }
+
   for (auto i = 0; i < conf_.get_threads() - 1; i += 1) {
-    threads.emplace_back([&ioc] {
-      while (true) {
-        ioc.poll();
-      }
-    });
+    threads.emplace_back([&ioc, &ioc_run_func]() { ioc_run_func(ioc); });
   }
-  // block here
-  while (true) {
-    ioc.poll();
-  }
+  ioc_run_func(ioc);
 }
 
 void Server::register_handler(const std::string &path, const http::verb &method,
@@ -139,13 +153,15 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
 
     if (conf_.get_enable_ssl()) {
       auto session = std::make_shared<SessionSSL>(
-          std::move(socket), std::ref(ssl_ctx_), timeout, router_);
+          std::move(socket), std::ref(ssl_ctx_), timeout, router_,
+          conf_.get_request_header_limit(), conf_.get_request_body_limit());
       net::spawn(acceptor.get_executor(),
                  std::bind(&SessionSSL::handle_session, session, logger_,
                            std::placeholders::_1));
     } else {
-      auto session =
-          std::make_shared<Session>(std::move(socket), timeout, router_);
+      auto session = std::make_shared<Session>(
+          std::move(socket), timeout, router_, conf_.get_request_header_limit(),
+          conf_.get_request_body_limit());
       net::spawn(acceptor.get_executor(),
                  std::bind(&Session::handle_session, session, logger_,
                            std::placeholders::_1));

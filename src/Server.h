@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/asio/io_context.hpp>
 #include <fstream>
 #include <string>
 #include <thread>
@@ -39,6 +40,7 @@ class Server {
  public:
   void init(LoggerType type = LoggerType::Async);
   void run();
+  void run(net::io_context &ioc);
   void register_handler(const std::string &path, const http::verb &method,
                         HandlerPtr handler,
                         bool enable_default_middlewares = true);

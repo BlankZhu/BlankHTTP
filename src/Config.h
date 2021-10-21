@@ -29,10 +29,10 @@ class Config {
   bool get_enable_ssl() const;
   std::string get_cert_path() const;
   std::string get_pri_key_path() const;
-  std::uint64_t get_request_header_limit() const;
+  std::uint32_t get_request_header_limit() const;
   std::uint64_t get_request_body_limit() const;
-  std::uint64_t get_response_header_limit() const;
-  std::uint64_t get_response_body_limit() const;
+  bool get_enable_spin() const;
+
   void set_log_level(int log_level);
   void set_threads(unsigned int threads);
   void set_address(const std::string& address);
@@ -42,10 +42,9 @@ class Config {
   void set_enable_ssl(bool enable_ssl);
   void set_cert_path(const std::string& cert_path);
   void set_pri_key_path(const std::string& pri_key_path);
-  void set_request_header_limit(std::uint64_t limit);
+  void set_request_header_limit(std::uint32_t limit);
   void set_request_body_limit(std::uint64_t limit);
-  void set_response_header_limit(std::uint64_t limit);
-  void set_response_body_limit(std::uint64_t limit);
+  void set_enable_spin(bool enable_spin);
 
  private:
   std::optional<int> log_level_;
@@ -57,10 +56,9 @@ class Config {
   std::optional<bool> enable_ssl_;
   std::optional<std::string> cert_path_;
   std::optional<std::string> pri_key_path_;
-  std::optional<std::uint64_t> request_header_limit_;
+  std::optional<std::uint32_t> request_header_limit_;
   std::optional<std::uint64_t> request_body_limit_;
-  std::optional<std::uint64_t> response_header_limit_;
-  std::optional<std::uint64_t> response_body_limit_;
+  std::optional<bool> enable_spin_;
 };
 
 using ConfigPtr = std::shared_ptr<Config>;
