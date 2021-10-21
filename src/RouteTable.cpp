@@ -54,44 +54,50 @@ HandlerPtr RouteTable::get_handler(ContextPtr context) const {
   boost::split(pieces, tmp_path, boost::is_any_of("/"));
 
   auto curr = root_;
-  for (const auto &piece : pieces) {
-    // skip empty pieces
-    if (piece.size() == 0) {
-      continue;
-    }
+  return dfs_get_handler_helper(context, pieces, 0, curr);
+}
 
-    // check if match plain text
-    auto match_plain_text = curr->node_map.find(piece);
-    if (match_plain_text != curr->node_map.end()) {
-      // match, continue to next node
-      curr = match_plain_text->second;
-      continue;
+HandlerPtr RouteTable::dfs_get_handler_helper(
+    ContextPtr context, const std::vector<std::string> &pieces,
+    std::size_t index, RouteNodePtr curr_node) const {
+  while (pieces[index].length() == 0 &&
+         index < pieces.size() -
+                     1)  // skip till the last elem (splited by tailing slash)
+  {
+    index++;
+  }
+  if (index >= pieces.size()) {
+    // return curr_node->handler;
+    auto method_int = static_cast<int>(context->get_method());
+    auto ret = curr_node->handler_map.find(method_int);
+    if (ret == curr_node->handler_map.end()) {
+      return nullptr;
     }
+    return ret->second;
+  }
 
-    // if current piece is not an empty string, check if match wildcard
-    if (piece.length() != 0) {
-      auto match_wildcard = curr->node_map.find(":");
-      if (match_wildcard != curr->node_map.end()) {
-        // match, continue to next node
-        context->set_param(curr->wildcard.key, piece);
-        curr = match_wildcard->second;
-        continue;
+  const auto &piece = pieces[index];
+  // check if match plain text
+  auto found = curr_node->node_map.find(piece);
+  if (found != curr_node->node_map.end()) {
+    return dfs_get_handler_helper(context, pieces, index + 1, found->second);
+  }
+
+  // if current piece is not an empty string, check if match wildcard
+  if (pieces[index].length() != 0) {
+    found = curr_node->node_map.find(":");
+    if (found != curr_node->node_map.end()) {
+      auto ret =
+          dfs_get_handler_helper(context, pieces, index + 1, found->second);
+      if (ret != nullptr) {
+        context->set_param(found->second->wildcard.key, piece);
       }
+      return ret;
     }
-
-    // no match at all, stop matching and return
-    return nullptr;
   }
 
-  // not nullptr, check if any method match
-  auto method = static_cast<int>(context->get_method());
-  auto match_method = curr->handler_map.find(method);
-  if (match_method == curr->handler_map.end()) {
-    return nullptr;
-  }
-
-  // return the match result
-  return match_method->second;
+  // not found, and index still doesn't reach
+  return nullptr;
 }
 
 std::string RouteTable::add_leading_slash(const std::string &path) const {
