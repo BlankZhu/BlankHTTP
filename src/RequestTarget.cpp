@@ -1,12 +1,14 @@
 #include "RequestTarget.h"
+#include "Handler.h"
+#include "Utility.h"
 
 namespace blank {
 void RequestTarget::parse_from_string(const std::string &target) {
   auto path = extract_path_from_target(target);
   path_ = path;
 
-  auto query = extract_query_from_target(target);
-  parse_querys(query, query_);
+  query_raw_ = extract_query_from_target(target);
+  parse_querys(query_raw_, query_);
 
   auto fragment = extract_fragment_from_target(target);
   fragment_ = fragment;
@@ -18,6 +20,8 @@ std::string RequestTarget::get_decoded_path() const {
   return percent_decode(get_path());
 }
 
+std::string RequestTarget::get_query() const { return query_raw_; }
+
 std::vector<std::string> RequestTarget::get_query(
     const std::string &key) const {
   auto found = query_.find(key);
@@ -25,6 +29,10 @@ std::vector<std::string> RequestTarget::get_query(
     return {};
   }
   return found->second;
+}
+
+std::string RequestTarget::get_decoded_query() const {
+  return percent_decode(query_raw_);
 }
 
 std::vector<std::string> RequestTarget::get_decoded_query(
@@ -68,9 +76,9 @@ std::string RequestTarget::extract_query_from_target(
 
   // get the query part
   if (sharp_pos == std::string::npos) {
-    return target.substr(question_pos);
+    return target.substr(question_pos + 1);
   }
-  return target.substr(question_pos, sharp_pos - question_pos);
+  return target.substr(question_pos + 1, sharp_pos - question_pos - 1);
 }
 
 std::string RequestTarget::extract_fragment_from_target(

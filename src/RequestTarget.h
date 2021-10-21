@@ -21,6 +21,8 @@ class RequestTarget {
   void parse_from_string(const std::string &target);
   std::string get_path() const;
   std::string get_decoded_path() const;
+  std::string get_query() const;
+  std::string get_decoded_query() const;
   std::vector<std::string> get_query(const std::string &key) const;
   std::vector<std::string> get_decoded_query(const std::string &key) const;
   std::string get_fragment() const;
@@ -35,6 +37,7 @@ class RequestTarget {
  private:
   std::string path_;
   Query query_;
+  std::string query_raw_;  // stores the query part before splitting
   std::string fragment_;
 };
 
