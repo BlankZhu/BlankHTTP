@@ -1,4 +1,5 @@
 #include "Session.h"
+#include <fmt/core.h>
 
 namespace blank {
 void Session::handle_session(LoggerInterfacePtr &logger,
@@ -19,8 +20,8 @@ void Session::handle_session(LoggerInterfacePtr &logger,
       break;
     }
     if (ec) {
-      logger->error(fmt("failed to read HTTP request, detail: [%1%]") %
-                    ec.message());
+      logger->error(fmt::format("failed to read HTTP request, detail: [{}]",
+                                ec.message()));
       return;
     }
     Request req{std::move(parser_->get())};
@@ -43,8 +44,8 @@ void Session::handle_session(LoggerInterfacePtr &logger,
         write_response(std::move(resp), req.version(), yield, ec);
     reset_serializer();
     if (ec) {
-      logger->error(fmt("failed to write HTTP response, detail: [%1%]") %
-                    ec.message());
+      logger->error(fmt::format("failed to write HTTP response, detail: [{}]",
+                                ec.message()));
       return;
     }
     if (http_conn_closed) {

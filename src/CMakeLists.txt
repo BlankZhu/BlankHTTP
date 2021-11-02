@@ -42,5 +42,12 @@ set (BLANK_HTTP_HEADERS
     Utility.h
 )
 
+# check dependencies
+find_package(Boost 1.75.0 REQUIRED COMPONENTS atomic chrono context coroutine log log_setup json thread)
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+find_package(fmt)
+target_link_libraries(blankhttp fmt::fmt)
+
 install(TARGETS blankhttp DESTINATION lib)
 install(FILES ${BLANK_HTTP_HEADERS} DESTINATION include/blankhttp)

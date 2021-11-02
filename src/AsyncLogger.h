@@ -16,7 +16,8 @@ class AsyncLogger : public LoggerInterface {
  protected:
   virtual void set_os_log();
   virtual void set_file_log(const std::string &log_filename);
-  virtual void do_logging(const fmt &formatted, trivial::severity_level level);
+  virtual void do_logging(std::string_view formatted,
+                          trivial::severity_level level);
 
  private:
   src::severity_logger<trivial::severity_level> logger_;

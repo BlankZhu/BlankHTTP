@@ -14,14 +14,15 @@ void Server::run() {
 }
 
 void Server::run(net::io_context &ioc) {
-  logger_->info(fmt("running BlankHTTPServer with config: %1%") %
-                conf_.detail_in_json());
+  logger_->info(fmt::format("running BlankHTTPServer with config: {}",
+                            conf_.detail_in_json()));
 
   if (conf_.get_enable_ssl()) {
     beast::error_code ec;
     setup_ssl_context(ec);
     if (ec) {
-      logger_->fatal(fmt("failed to setup SSL, detail: [%1%]") % ec.message());
+      logger_->fatal(
+          fmt::format("failed to setup SSL, detail: [{}]", ec.message()));
       return;
     }
   }
@@ -59,8 +60,8 @@ void Server::register_handler(const std::string &path, const http::verb &method,
                               HandlerPtr handler,
                               bool enable_default_middlewares) {
   if (initialized_) {
-    logger_->warning(
-        fmt("cannot register new handler once the server is initialized"));
+    logger_->warning(fmt::format(
+        "cannot register new handler once the server is initialized"));
     return;
   }
 
@@ -75,8 +76,8 @@ void Server::register_handler(const std::string &path, const http::verb &method,
 void Server::register_chain(const std::string &path, const http::verb &method,
                             HandleChainPtr chain) {
   if (initialized_) {
-    logger_->warning(
-        fmt("cannot register new chain once the server is initialized"));
+    logger_->warning(fmt::format(
+        "cannot register new chain once the server is initialized"));
     return;
   }
 
@@ -116,26 +117,26 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
   tcp::acceptor acceptor{ioc};
   acceptor.open(ep.protocol(), ec);
   if (ec) {
-    logger_->error(fmt("acceptor failed to open socket, detail: [%1%]") %
-                   ec.message());
+    logger_->error(fmt::format("acceptor failed to open socket, detail: [{}]",
+                               ec.message()));
     return;
   }
   acceptor.set_option(net::socket_base::reuse_address(true), ec);
   if (ec) {
-    logger_->error(fmt("acceptor failed to set socket option, detail: [%1%]") %
-                   ec.message());
+    logger_->error(fmt::format(
+        "acceptor failed to set socket option, detail: [{}]", ec.message()));
     return;
   }
   acceptor.bind(ep, ec);
   if (ec) {
-    logger_->error(fmt("acceptor failed to bind address, detail: [%1%]") %
-                   ec.message());
+    logger_->error(fmt::format("acceptor failed to bind address, detail: [{}]",
+                               ec.message()));
     return;
   }
   acceptor.listen(net::socket_base::max_listen_connections, ec);
   if (ec) {
-    logger_->error(fmt("acceptor failed to listen connection, detail: [%1%]") %
-                   ec.message());
+    logger_->error(fmt::format(
+        "acceptor failed to listen connection, detail: [{}]", ec.message()));
     return;
   }
 
@@ -143,9 +144,8 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
     tcp::socket socket{ioc};
     acceptor.async_accept(socket, yield[ec]);
     if (ec) {
-      logger_->error(
-          fmt("acceptor failed to accept connection, detail: [%1%]") %
-          ec.message());
+      logger_->error(fmt::format(
+          "acceptor failed to accept connection, detail: [{}]", ec.message()));
       continue;
     }
 

@@ -9,8 +9,8 @@ void SessionSSL::handle_session(LoggerInterfacePtr &logger,
   beast::get_lowest_layer(stream_).expires_after(timeout_);
   stream_.async_handshake(ssl::stream_base::server, yield[ec]);
   if (ec) {
-    logger->error(fmt("failed to perform SSL handshake, detail: [%1%]") %
-                  ec.message());
+    logger->error(fmt::format("failed to perform SSL handshake, detail: [{}]",
+                              ec.message()));
     return;
   }
 
@@ -28,8 +28,8 @@ void SessionSSL::handle_session(LoggerInterfacePtr &logger,
       break;
     }
     if (ec) {
-      logger->error(fmt("failed to read HTTP request, detail: [%1%]") %
-                    ec.message());
+      logger->error(fmt::format("failed to read HTTP request, detail: [{}]",
+                                ec.message()));
       return;
     }
     Request req{std::move(parser_->get())};
@@ -54,8 +54,8 @@ void SessionSSL::handle_session(LoggerInterfacePtr &logger,
     reset_serializer();
 
     if (ec) {
-      logger->error(fmt("failed to write HTTP response, detail: [%1%]") %
-                    ec.message());
+      logger->error(fmt::format("failed to write HTTP response, detail: [{}]",
+                                ec.message()));
       return;
     }
     if (http_conn_closed) {

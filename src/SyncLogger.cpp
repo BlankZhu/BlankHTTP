@@ -74,7 +74,7 @@ void SyncLogger::set_file_log(const std::string &log_filename) {
       expr::attr<trivial::severity_level>("Severity") % expr::message);
 }
 
-void SyncLogger::do_logging(const fmt &formatted,
+void SyncLogger::do_logging(std::string_view formatted,
                             trivial::severity_level level) {
   BOOST_LOG_SEV(logger_, level) << formatted;
 }

@@ -75,7 +75,7 @@ void AsyncLogger::set_file_log(const std::string &log_filename) {
       logging::trivial::severity % expr::message);
 }
 
-void AsyncLogger::do_logging(const fmt &formatted,
+void AsyncLogger::do_logging(std::string_view formatted,
                              trivial::severity_level level) {
   BOOST_LOG_SEV(logger_, level) << formatted;
 }
