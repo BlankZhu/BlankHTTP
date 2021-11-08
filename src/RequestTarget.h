@@ -6,39 +6,41 @@
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/utility/string_view.hpp>
 
 #include "Utility.h"
 
 namespace blank {
-using Query = std::unordered_map<std::string, std::vector<std::string>>;
+using Query = std::unordered_map<std::string, std::vector<boost::string_view>>;
 
 class RequestTarget {
  public:
-  RequestTarget() = default;
+  RequestTarget(boost::string_view target) { parse_from_string(target); }
   ~RequestTarget() = default;
 
  public:
-  void parse_from_string(const std::string &target);
-  std::string get_path() const;
+  boost::string_view get_path() const;
   std::string get_decoded_path() const;
-  std::string get_query() const;
+  boost::string_view get_query() const;
   std::string get_decoded_query() const;
-  std::vector<std::string> get_query(const std::string &key) const;
+  std::vector<boost::string_view> get_query(const std::string &key) const;
   std::vector<std::string> get_decoded_query(const std::string &key) const;
-  std::string get_fragment() const;
+  boost::string_view get_fragment() const;
   std::string get_decoded_fragment() const;
 
  private:
-  std::string extract_path_from_target(const std::string &target) const;
-  std::string extract_query_from_target(const std::string &target) const;
-  std::string extract_fragment_from_target(const std::string &target) const;
-  void parse_querys(const std::string &query, Query &ret);
+  void parse_from_string(boost::string_view target);
+  boost::string_view extract_path_from_target(boost::string_view target) const;
+  boost::string_view extract_query_from_target(boost::string_view target) const;
+  boost::string_view extract_fragment_from_target(
+      boost::string_view target) const;
+  void parse_querys(boost::string_view query_raw, Query &ret);
 
  private:
-  std::string path_;
+  boost::string_view path_;
   Query query_;
-  std::string query_raw_;  // stores the query part before splitting
-  std::string fragment_;
+  boost::string_view query_raw_;  // stores the query part before splitting
+  boost::string_view fragment_;
 };
 
 using RequestTargetPtr = std::shared_ptr<RequestTarget>;

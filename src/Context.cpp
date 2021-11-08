@@ -1,4 +1,5 @@
 #include "Context.h"
+#include "RequestTarget.h"
 
 namespace blank {
 std::any Context::get_shared_data() const { return shared_data_; }
@@ -17,19 +18,11 @@ std::string Context::get_param(const std::string &key) const {
   return found->second;
 }
 
-std::string Context::get_path() const { return request_target_->get_path(); }
-
-std::string Context::get_query() const { return request_target_->get_query(); }
-
-std::vector<std::string> Context::get_query(const std::string &key) const {
-  return request_target_->get_query(key);
+const RequestTargetPtr Context::get_request_target() const {
+  return request_target_;
 }
 
-std::string Context::get_fragment() const {
-  return request_target_->get_fragment();
-}
-
-http::verb Context::get_method() const { return request_method_; }
+http::verb Context::get_request_method() const { return request_method_; }
 
 net::any_io_executor Context::get_executor() { return executor_; }
 

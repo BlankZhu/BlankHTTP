@@ -49,7 +49,8 @@ void RouteTable::add_handler(const std::string &path, const http::verb &method,
 }
 
 HandlerPtr RouteTable::get_handler(ContextPtr context) const {
-  auto tmp_path = add_leading_slash(context->get_path());
+  auto tmp_path =
+      add_leading_slash(context->get_request_target()->get_path().to_string());
   std::vector<std::string> pieces{};
   boost::split(pieces, tmp_path, boost::is_any_of("/"));
 
@@ -68,7 +69,7 @@ HandlerPtr RouteTable::dfs_get_handler_helper(
   }
   if (index >= pieces.size()) {
     // return curr_node->handler;
-    auto method_int = static_cast<int>(context->get_method());
+    auto method_int = static_cast<int>(context->get_request_method());
     auto ret = curr_node->handler_map.find(method_int);
     if (ret == curr_node->handler_map.end()) {
       return nullptr;

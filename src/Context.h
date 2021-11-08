@@ -16,7 +16,9 @@ namespace blank {
 namespace net = boost::asio;
 namespace http = boost::beast::http;
 using tcp = boost::asio::ip::tcp;
-using Param = std::unordered_map<std::string, std::string>;
+using Param =
+    std::unordered_map<std::string, std::string>;  // maybe from std::string to
+                                                   // boost::string_view
 
 class Context {
  public:
@@ -36,11 +38,8 @@ class Context {
   void set_shared_data(const std::any &data);
   std::string get_param(const std::string &key) const;
   void set_param(const std::string &key, const std::string &value);
-  std::string get_path() const;
-  std::string get_query() const;
-  std::vector<std::string> get_query(const std::string &key) const;
-  std::string get_fragment() const;
-  http::verb get_method() const;
+  const RequestTargetPtr get_request_target() const;
+  http::verb get_request_method() const;
   net::any_io_executor get_executor();
   net::yield_context &get_yield_context();
 
@@ -48,7 +47,7 @@ class Context {
   std::any shared_data_;
   Param param_;
   tcp::endpoint remote_endpoint_;
-  RequestTargetPtr request_target_;
+  const RequestTargetPtr request_target_;
   http::verb request_method_;
   net::any_io_executor executor_;
   net::yield_context &yield_;

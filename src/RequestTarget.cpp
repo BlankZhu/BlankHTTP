@@ -1,9 +1,9 @@
 #include "RequestTarget.h"
-#include "Handler.h"
+#include <boost/utility/string_view_fwd.hpp>
 #include "Utility.h"
 
 namespace blank {
-void RequestTarget::parse_from_string(const std::string &target) {
+void RequestTarget::parse_from_string(boost::string_view target) {
   auto path = extract_path_from_target(target);
   path_ = path;
 
@@ -14,15 +14,15 @@ void RequestTarget::parse_from_string(const std::string &target) {
   fragment_ = fragment;
 }
 
-std::string RequestTarget::get_path() const { return path_; }
+boost::string_view RequestTarget::get_path() const { return path_; }
 
 std::string RequestTarget::get_decoded_path() const {
-  return percent_decode(get_path());
+  return percent_decode({path_.data(), path_.size()});
 }
 
-std::string RequestTarget::get_query() const { return query_raw_; }
+boost::string_view RequestTarget::get_query() const { return query_raw_; }
 
-std::vector<std::string> RequestTarget::get_query(
+std::vector<boost::string_view> RequestTarget::get_query(
     const std::string &key) const {
   auto found = query_.find(key);
   if (found == query_.end()) {
@@ -32,39 +32,41 @@ std::vector<std::string> RequestTarget::get_query(
 }
 
 std::string RequestTarget::get_decoded_query() const {
-  return percent_decode(query_raw_);
+  return percent_decode({query_raw_.data(), query_raw_.size()});
 }
 
 std::vector<std::string> RequestTarget::get_decoded_query(
     const std::string &key) const {
+  std::vector<std::string> ret{};
   auto found = get_query(key);
-  for (auto &value : found) {
-    value = percent_decode(value);
+  for (const auto &value : found) {
+    ret.emplace_back(percent_decode({value.data(), value.size()}));
   }
-  return found;
+  return ret;
 }
 
-std::string RequestTarget::get_fragment() const { return fragment_; }
+boost::string_view RequestTarget::get_fragment() const { return fragment_; }
 
 std::string RequestTarget::get_decoded_fragment() const {
-  return percent_decode(get_fragment());
+  return percent_decode({fragment_.data(), fragment_.size()});
 }
 
-std::string RequestTarget::extract_path_from_target(
-    const std::string &target) const {
-  std::vector<std::string> splited{};
-  boost::split(splited, target, boost::is_any_of("?"));
-  if (!splited.empty()) {
-    return splited[0];
+boost::string_view RequestTarget::extract_path_from_target(
+    boost::string_view target) const {
+  std::vector<boost::string_view> splitted{};
+  // boost::split(splitted, target, boost::is_any_of("?"));
+  split_sv(splitted, target, "?");
+  if (!splitted.empty()) {
+    return splitted[0];
   }
   return "";
 }
 
-std::string RequestTarget::extract_query_from_target(
-    const std::string &target) const {
+boost::string_view RequestTarget::extract_query_from_target(
+    boost::string_view target) const {
   // find question mark
   auto question_pos = target.find_first_of('?');
-  if (question_pos == std::string::npos) {
+  if (question_pos == boost::string_view::npos) {
     return "";
   }
 
@@ -75,39 +77,41 @@ std::string RequestTarget::extract_query_from_target(
   }
 
   // get the query part
-  if (sharp_pos == std::string::npos) {
+  if (sharp_pos == boost::string_view::npos) {
     return target.substr(question_pos + 1);
   }
   return target.substr(question_pos + 1, sharp_pos - question_pos - 1);
 }
 
-std::string RequestTarget::extract_fragment_from_target(
-    const std::string &target) const {
-  std::vector<std::string> splited{};
-  boost::split(splited, target, boost::is_any_of("#"));
-  if (splited.size() == 2) {
-    return splited[1];
+boost::string_view RequestTarget::extract_fragment_from_target(
+    boost::string_view target) const {
+  std::vector<boost::string_view> splitted{};
+  // boost::split(splitted, target, boost::is_any_of("#"));
+  split_sv(splitted, target, "#");
+  if (splitted.size() == 2) {
+    return splitted[1];
   }
   return "";
 }
 
-void RequestTarget::parse_querys(const std::string &query, Query &ret) {
-  std::vector<std::string> splited{};
-  boost::split(splited, query, boost::is_any_of("&"));
+void RequestTarget::parse_querys(boost::string_view query, Query &ret) {
+  std::vector<boost::string_view> splitted{};
+  // boost::split(splitted, query, boost::is_any_of("&"));
+  split_sv(splitted, query, "&");
 
-  for (const auto &part : splited) {
-    // splited by '='
+  for (const auto &part : splitted) {
+    // splitted by '='
     std::vector<std::string> key_to_values{};
     boost::split(key_to_values, part, boost::is_any_of("="));
     if (key_to_values.size() != 2) {
       continue;
     }
     auto key = key_to_values[0];
-    auto value = key_to_values[1];
+    auto value = boost::string_view{key_to_values[1]};
 
-    // splited by ','
-    std::vector<std::string> values{};
-    boost::split(values, value, boost::is_any_of(","));
+    // splitted by ','
+    std::vector<boost::string_view> values{};
+    split_sv(values, value, ",");
 
     // set to ret
     ret.insert_or_assign(key, values);

@@ -37,8 +37,7 @@ void SessionSSL::handle_session(LoggerInterfacePtr &logger,
     // handle request, generate response
     auto remote_endpoint =
         beast::get_lowest_layer(stream_).socket().remote_endpoint();
-    auto target = std::make_shared<RequestTarget>();
-    target->parse_from_string(req.target().to_string());
+    auto target = std::make_shared<RequestTarget>(req.target());
     auto executor = beast::get_lowest_layer(stream_).socket().get_executor();
     auto context =
         std::make_shared<Context>(remote_endpoint, target, req.method(),
