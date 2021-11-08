@@ -28,8 +28,7 @@ void Session::handle_session(LoggerInterfacePtr &logger,
     // handle request, generate response
     // setup context
     auto remote_endpoint = stream_.socket().remote_endpoint();
-    auto target = std::make_shared<RequestTarget>();
-    target->parse_from_string(req.target().to_string());
+    auto target = std::make_shared<RequestTarget>(req.target());
     auto context = std::make_shared<Context>(
         remote_endpoint, target, req.method(), stream_.socket().get_executor(),
         std::ref(yield), logger);
