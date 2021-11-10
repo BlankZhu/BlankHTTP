@@ -26,4 +26,4 @@ class Handler {
 };
 
 using HandlerPtr = std::shared_ptr<Handler>;
-};  // namespace blank
+}  // namespace blank

@@ -27,4 +27,4 @@ class Router {
 };
 
 using RouterPtr = std::shared_ptr<Router>;
-};  // namespace blank
+}  // namespace blank

@@ -91,4 +91,4 @@ void Session::reset_serializer() {
     file_serializer_ = boost::none;
   }
 }
-};  // namespace blank
+}  // namespace blank

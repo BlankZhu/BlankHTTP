@@ -57,4 +57,4 @@ class Context {
 };
 
 using ContextPtr = std::shared_ptr<Context>;
-};  // namespace blank
+}  // namespace blank

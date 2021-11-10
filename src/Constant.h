@@ -22,5 +22,5 @@ const unsigned int k_default_port = 8077;
 const int k_default_timeout = 30;  // 30 sec
 const bool k_default_enable_ssl = false;
 const bool k_default_enable_spin = false;
-};  // namespace constant
-};  // namespace blank
+}  // namespace constant
+}  // namespace blank

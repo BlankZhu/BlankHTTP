@@ -168,4 +168,4 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
     }
   }
 }
-};  // namespace blank
+}  // namespace blank

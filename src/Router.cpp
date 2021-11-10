@@ -13,4 +13,4 @@ HandlerPtr Router::get_handler(ContextPtr context) const {
   }
   return std::make_shared<HandleChain>();
 }
-};  // namespace blank
+}  // namespace blank

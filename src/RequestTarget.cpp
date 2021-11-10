@@ -117,4 +117,4 @@ void RequestTarget::parse_querys(boost::string_view query, Query &ret) {
     ret.insert_or_assign(key, values);
   }
 }
-};  // namespace blank
+}  // namespace blank

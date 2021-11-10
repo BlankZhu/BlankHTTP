@@ -16,4 +16,4 @@ class DefaultMiddleware : public Middleware {
  public:
   virtual Response handle_request(ContextPtr ctx, Request &&req);
 };
-};  // namespace blank
+}  // namespace blank

@@ -57,4 +57,4 @@ struct RouteNode {
   Wildcard wildcard;
   std::unordered_map<std::string, RouteNodePtr> node_map;
 };
-};  // namespace blank
+}  // namespace blank

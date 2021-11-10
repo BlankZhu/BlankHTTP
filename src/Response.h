@@ -38,4 +38,4 @@ class Response {
   boost::optional<FileResponse> file_response_;
 };
 
-};  // namespace blank
+}  // namespace blank

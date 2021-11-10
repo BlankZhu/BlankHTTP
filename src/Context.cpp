@@ -27,4 +27,4 @@ http::verb Context::get_request_method() const { return request_method_; }
 net::any_io_executor Context::get_executor() { return executor_; }
 
 net::yield_context &Context::get_yield_context() { return yield_; }
-};  // namespace blank
+}  // namespace blank

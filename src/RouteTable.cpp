@@ -108,4 +108,4 @@ std::string RouteTable::add_leading_slash(const std::string &path) const {
   }
   return path;
 }
-};  // namespace blank
+}  // namespace blank

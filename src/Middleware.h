@@ -24,4 +24,4 @@ class Middleware : public Handler {
  private:
   HandlerPtr next_;
 };
-};  // namespace blank
+}  // namespace blank

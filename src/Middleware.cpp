@@ -11,4 +11,4 @@ void Middleware::set_next(HandlerPtr next) { next_ = next; }
 Response Middleware::next(ContextPtr ctx, Request &&req) {
   return next_->handle_request(ctx, std::move(req));
 }
-};  // namespace blank
+}  // namespace blank

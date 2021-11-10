@@ -63,4 +63,4 @@ class Config {
 
 using ConfigPtr = std::shared_ptr<Config>;
 
-};  // namespace blank
+}  // namespace blank

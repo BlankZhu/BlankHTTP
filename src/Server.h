@@ -59,4 +59,4 @@ class Server {
   ssl::context ssl_ctx_;
   bool initialized_;
 };
-};  // namespace blank
+}  // namespace blank
