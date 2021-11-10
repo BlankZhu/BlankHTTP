@@ -13,4 +13,4 @@ Response DefaultMiddleware::handle_request(ContextPtr ctx, Request &&req) {
 
   return resp;
 }
-};  // namespace blank
+}  // namespace blank

@@ -44,4 +44,4 @@ class RequestTarget {
 };
 
 using RequestTargetPtr = std::shared_ptr<RequestTarget>;
-};  // namespace blank
+}  // namespace blank

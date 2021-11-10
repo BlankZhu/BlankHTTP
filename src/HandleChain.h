@@ -26,4 +26,4 @@ class HandleChain : public Handler {
   std::vector<MiddlewarePtr> middlewares_;
 };
 using HandleChainPtr = std::shared_ptr<HandleChain>;
-};  // namespace blank
+}  // namespace blank

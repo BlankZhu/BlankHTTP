@@ -85,4 +85,4 @@ std::string encode_url(std::string_view url_to_encode) {
 std::string decode_url(std::string_view url_to_decode) {
   return percent_decode(url_to_decode);
 }
-};  // namespace blank
+}  // namespace blank

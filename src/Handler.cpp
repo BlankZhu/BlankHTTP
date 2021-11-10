@@ -14,4 +14,4 @@ Response Handler::base_not_found(ContextPtr ctx, Request &&req) {
 
   return resp;
 }
-};  // namespace blank
+}  // namespace blank

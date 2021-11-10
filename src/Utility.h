@@ -31,4 +31,4 @@ void split_sv(ContainerT &output, const StringViewT &input,
     first = std::next(second);
   }
 }
-};  // namespace blank
+}  // namespace blank

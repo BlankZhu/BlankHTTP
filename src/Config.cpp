@@ -111,4 +111,4 @@ std::string Config::detail_in_json() const {
 
   return json::serialize(obj);
 }
-};  // namespace blank
+}  // namespace blank

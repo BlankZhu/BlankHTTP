@@ -46,4 +46,4 @@ Response HandleChain::handle_request(ContextPtr context, Request &&request) {
   }
   return middlewares_.front()->handle_request(context, std::move(request));
 }
-};  // namespace blank
+}  // namespace blank

@@ -11,7 +11,6 @@ add_library(blankhttp SHARED
     RequestTarget.cpp
     Response.cpp
     Router.cpp
-    RouteTable.cpp
     Server.cpp
     Session.cpp
     SessionSSL.cpp
@@ -33,8 +32,8 @@ set (BLANK_HTTP_HEADERS
     Middleware.h
     RequestTarget.h
     Response.h
+    RouteNode.h
     Router.h
-    RouteTable.h
     Server.h
     Session.h
     SessionSSL.h
