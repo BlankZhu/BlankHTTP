@@ -10,6 +10,7 @@
 
 #include "Context.h"
 #include "Handler.h"
+#include "Utility.h"
 
 namespace blank {
 class RouteTable;
@@ -36,10 +37,9 @@ class RouteTable {
                    HandlerPtr handler);
 
  private:
-  HandlerPtr dfs_get_handler_helper(ContextPtr context,
-                                    const std::vector<std::string> &pieces,
-                                    std::size_t index,
-                                    RouteNodePtr curr_node) const;
+  HandlerPtr dfs_get_handler_helper(
+      ContextPtr context, const std::vector<boost::string_view> &pieces,
+      std::size_t index, RouteNodePtr curr_node) const;
   std::string add_leading_slash(const std::string &path) const;
 
  private:

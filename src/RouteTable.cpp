@@ -51,15 +51,16 @@ void RouteTable::add_handler(const std::string &path, const http::verb &method,
 HandlerPtr RouteTable::get_handler(ContextPtr context) const {
   auto tmp_path =
       add_leading_slash(context->get_request_target()->get_path().to_string());
-  std::vector<std::string> pieces{};
-  boost::split(pieces, tmp_path, boost::is_any_of("/"));
+  boost::string_view tmp_sv{tmp_path};
+  std::vector<boost::string_view> pieces{};
+  split_sv(pieces, tmp_sv, "/");
 
   auto curr = root_;
   return dfs_get_handler_helper(context, pieces, 0, curr);
 }
 
 HandlerPtr RouteTable::dfs_get_handler_helper(
-    ContextPtr context, const std::vector<std::string> &pieces,
+    ContextPtr context, const std::vector<boost::string_view> &pieces,
     std::size_t index, RouteNodePtr curr_node) const {
   while (pieces[index].length() == 0 &&
          index < pieces.size() -
@@ -79,7 +80,7 @@ HandlerPtr RouteTable::dfs_get_handler_helper(
 
   const auto &piece = pieces[index];
   // check if match plain text
-  auto found = curr_node->node_map.find(piece);
+  auto found = curr_node->node_map.find(piece.to_string());
   if (found != curr_node->node_map.end()) {
     return dfs_get_handler_helper(context, pieces, index + 1, found->second);
   }
@@ -91,7 +92,7 @@ HandlerPtr RouteTable::dfs_get_handler_helper(
       auto ret =
           dfs_get_handler_helper(context, pieces, index + 1, found->second);
       if (ret != nullptr) {
-        context->set_param(found->second->wildcard.key, piece);
+        context->set_param(found->second->wildcard.key, piece.to_string());
       }
       return ret;
     }
