@@ -30,8 +30,9 @@ class Response {
   void set_file_response(FileResponse&& response);
   boost::optional<StringResponse>& get_string_response_ref();
   boost::optional<FileResponse>& get_file_response_ref();
-  bool is_string_response();
-  bool is_file_response();
+  bool is_string_response() const;
+  bool is_file_response() const;
+  bool need_eof() const;
 
  private:
   boost::optional<StringResponse> string_response_;
