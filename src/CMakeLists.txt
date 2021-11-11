@@ -13,7 +13,6 @@ add_library(blankhttp SHARED
     Router.cpp
     Server.cpp
     Session.cpp
-    SessionSSL.cpp
     SyncLogger.cpp
     Utility.cpp
 )
@@ -36,7 +35,6 @@ set (BLANK_HTTP_HEADERS
     Router.h
     Server.h
     Session.h
-    SessionSSL.h
     SyncLogger.h
     Utility.h
 )

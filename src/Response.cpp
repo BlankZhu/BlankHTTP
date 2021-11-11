@@ -44,7 +44,19 @@ boost::optional<FileResponse>& Response::get_file_response_ref() {
   return file_response_;
 }
 
-bool Response::is_string_response() { return string_response_.has_value(); }
+bool Response::is_string_response() const {
+  return string_response_.has_value();
+}
 
-bool Response::is_file_response() { return file_response_.has_value(); }
+bool Response::is_file_response() const { return file_response_.has_value(); }
+
+bool Response::need_eof() const {
+  if (string_response_.has_value()) {
+    return string_response_->need_eof();
+  }
+  if (file_response_.has_value()) {
+    return file_response_->need_eof();
+  }
+  return false;
+}
 }  // namespace blank

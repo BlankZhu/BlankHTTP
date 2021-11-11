@@ -1,6 +1,8 @@
 #include "Server.h"
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/spawn.hpp>
 #include <functional>
+#include "Session.h"
 
 namespace blank {
 void Server::init(LoggerType type) {
@@ -94,17 +96,18 @@ void Server::setup_logger(LoggerType type) {
 }
 
 void Server::setup_ssl_context(beast::error_code &ec) {
-  ssl_ctx_.set_options(ssl::context::default_workarounds |
-                       ssl::context::no_sslv2 | ssl::context::no_sslv3 |
-                       ssl::context::no_tlsv1 | ssl::context::no_tlsv1_1 |
-                       ssl::context::single_dh_use);
+  ssl_ctx_ = std::make_shared<ssl::context>(ssl::context::tls_server);
+  ssl_ctx_->set_options(ssl::context::default_workarounds |
+                        ssl::context::no_sslv2 | ssl::context::no_sslv3 |
+                        ssl::context::no_tlsv1 | ssl::context::no_tlsv1_1 |
+                        ssl::context::single_dh_use);
 
-  ssl_ctx_.use_certificate_chain_file(conf_.get_cert_path(), ec);
+  ssl_ctx_->use_certificate_chain_file(conf_.get_cert_path(), ec);
   if (ec) {
     return;
   }
-  ssl_ctx_.use_private_key_file(conf_.get_pri_key_path(),
-                                ssl::context::file_format::pem, ec);
+  ssl_ctx_->use_private_key_file(conf_.get_pri_key_path(),
+                                 ssl::context::file_format::pem, ec);
 
   return;
 }
@@ -150,22 +153,12 @@ void Server::listen(net::io_context &ioc, tcp::endpoint ep,
     }
 
     std::chrono::seconds timeout{conf_.get_timeout()};
-
-    if (conf_.get_enable_ssl()) {
-      auto session = std::make_shared<SessionSSL>(
-          std::move(socket), std::ref(ssl_ctx_), timeout, router_,
-          conf_.get_request_header_limit(), conf_.get_request_body_limit());
-      net::spawn(acceptor.get_executor(),
-                 std::bind(&SessionSSL::handle_session, session, logger_,
-                           std::placeholders::_1));
-    } else {
-      auto session = std::make_shared<Session>(
-          std::move(socket), timeout, router_, conf_.get_request_header_limit(),
-          conf_.get_request_body_limit());
-      net::spawn(acceptor.get_executor(),
-                 std::bind(&Session::handle_session, session, logger_,
-                           std::placeholders::_1));
-    }
+    auto session = std::make_shared<Session>(
+        std::move(socket), timeout, router_, ssl_ctx_,
+        conf_.get_request_header_limit(), conf_.get_request_body_limit());
+    net::spawn(acceptor.get_executor(),
+               std::bind(&Session::handle_session, session, logger_,
+                         std::placeholders::_1));
   }
 }
 }  // namespace blank
