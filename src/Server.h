@@ -18,7 +18,6 @@
 #include "Handler.h"
 #include "Router.h"
 #include "Session.h"
-#include "SessionSSL.h"
 #include "SyncLogger.h"
 
 namespace blank {
@@ -33,7 +32,7 @@ class Server {
   Server(Config &conf)
       : conf_(conf),
         router_(std::make_shared<Router>()),
-        ssl_ctx_(ssl::context::tls_server),
+        ssl_ctx_(nullptr),
         initialized_(false) {}
   ~Server() = default;
 
@@ -56,7 +55,7 @@ class Server {
   Config conf_;
   RouterPtr router_;
   LoggerInterfacePtr logger_;
-  ssl::context ssl_ctx_;
+  std::shared_ptr<ssl::context> ssl_ctx_;
   bool initialized_;
 };
 }  // namespace blank

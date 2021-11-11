@@ -1,12 +1,14 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/beast/ssl.hpp>
 #include <boost/optional.hpp>
 
 #include "Constant.h"
@@ -19,6 +21,7 @@ namespace blank {
 namespace beast = boost::beast;
 namespace http = boost::beast::http;
 namespace net = boost::asio;
+namespace ssl = boost::asio::ssl;
 using tcp = boost::asio::ip::tcp;
 
 using Request = http::request<http::string_body /*, Allocator */>;
@@ -32,34 +35,48 @@ class Session {
  public:
   Session(tcp::socket &&socket, const std::chrono::seconds timeout,
           const RouterPtr router,
+          const std::shared_ptr<ssl::context> ssl_context = nullptr,
           const std::uint32_t &request_header_limit =
               constant::k_default_request_header_limit,
           const std::uint64_t &request_body_limit =
               constant::k_default_request_body_limit)
-      : stream_(std::move(socket)),
+      : timeout_(timeout),
         router_(router),
-        timeout_(timeout),
+        ssl_context_(ssl_context),
         request_header_limit_(request_header_limit),
-        request_body_limit_(request_body_limit) {}
+        request_body_limit_(request_body_limit) {
+    if (ssl_context_ != nullptr) {
+      ssl_stream_.emplace(std::move(socket), (*ssl_context_));
+    } else {
+      tcp_stream_.emplace(std::move(socket));
+    }
+  }
   ~Session() = default;
 
  public:
   void handle_session(LoggerInterfacePtr &logger, net::yield_context yield);
 
  private:
-  bool write_response(Response &&resp, int http_version,
-                      net::yield_context &yield, beast::error_code &ec);
-  void reset_serializer();
+  void reset_expire_time();
+  void perform_ssl_handshake(net::yield_context yield, beast::error_code &ec);
+  ContextPtr setup_context(const Request &req, bool enable_ssl,
+                           LoggerInterfacePtr logger, net::yield_context yield);
+  void write_response(Response &resp, int http_version, bool enable_ssl,
+                      net::yield_context yield, beast::error_code &ec);
+  void clear_serializer();
 
  private:
-  beast::tcp_stream stream_;
+  boost::optional<beast::tcp_stream> tcp_stream_;
+  boost::optional<beast::ssl_stream<beast::tcp_stream>> ssl_stream_;
+  const std::chrono::seconds timeout_;
   const RouterPtr router_;
-  std::chrono::seconds timeout_;
-  beast::flat_buffer buffer_;  // TODO: to static buffer maybe
+  const std::shared_ptr<ssl::context> ssl_context_;
+  const std::uint32_t request_header_limit_;
+  const std::uint64_t request_body_limit_;
   boost::optional<Parser> parser_;
-  const std::uint32_t &request_header_limit_;
-  const std::uint64_t &request_body_limit_;
+  beast::flat_buffer buffer_;
   boost::optional<StringSerializer> string_serializer_;
   boost::optional<FileSerializer> file_serializer_;
 };
+
 }  // namespace blank

@@ -57,6 +57,6 @@ bool Response::need_eof() const {
   if (file_response_.has_value()) {
     return file_response_->need_eof();
   }
-  return true;
+  return false;
 }
 }  // namespace blank
