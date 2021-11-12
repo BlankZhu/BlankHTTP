@@ -45,55 +45,14 @@ ContextPtr Session::setup_context(const Request &req, bool enable_ssl,
 
 void Session::write_response(Response &resp, int http_version, bool enable_ssl,
                              net::yield_context yield, beast::error_code &ec) {
-  // ugly code, need to merge StringResponse & FileResponse lik Beast does.
-
-  if (enable_ssl) {
-    if (resp.is_string_response()) {
-      auto &resp_ref = resp.get_string_response_ref();
-      resp_ref->prepare_payload();
-      auto http_conn_close = resp_ref->need_eof();
-      string_serializer_.emplace(*resp_ref);
-
-      beast::get_lowest_layer(*ssl_stream_).expires_after(timeout_);
-      http::async_write(*ssl_stream_, *string_serializer_, yield[ec]);
-      return;
-    }
-    if (resp.is_file_response()) {
-      auto &resp_ref = resp.get_file_response_ref();
-      resp_ref->prepare_payload();
-      auto http_conn_close = resp_ref->need_eof();
-      file_serializer_.emplace(*resp_ref);
-
-      beast::get_lowest_layer(*ssl_stream_).expires_after(timeout_);
-      http::async_write(*ssl_stream_, *file_serializer_, yield[ec]);
-      return;
-    }
-
-    // no response set, use a default one
-    StringResponse err_resp{http::status::internal_server_error, http_version};
-    http::async_write(*ssl_stream_, err_resp, yield[ec]);
-    return;
-  }
-
   if (resp.is_string_response()) {
-    auto &resp_ref = resp.get_string_response_ref();
-    resp_ref->prepare_payload();
-    auto http_conn_close = resp_ref->need_eof();
-    string_serializer_.emplace(*resp_ref);
-
-    (*tcp_stream_).expires_after(timeout_);
-
-    http::async_write(*tcp_stream_, *string_serializer_, yield[ec]);
+    auto &r = resp.get_string_response_ref();
+    _write_response(*r, http_version, enable_ssl, yield, ec);
     return;
   }
   if (resp.is_file_response()) {
-    auto &resp_ref = resp.get_file_response_ref();
-    resp_ref->prepare_payload();
-    auto http_conn_close = resp_ref->need_eof();
-    file_serializer_.emplace(*resp_ref);
-
-    (*tcp_stream_).expires_after(timeout_);
-    http::async_write(*tcp_stream_, *file_serializer_, yield[ec]);
+    auto &r = resp.get_file_response_ref();
+    _write_response(*r, http_version, enable_ssl, yield, ec);
     return;
   }
 
@@ -152,7 +111,6 @@ void Session::handle_session(LoggerInterfacePtr &logger,
     // write response
     write_response(resp, req.version(), enable_ssl, yield, ec);
     auto need_eof = resp.need_eof();
-    clear_serializer();
     if (ec) {
       logger->error(fmt("failed to write HTTP response, detail: [%1%]") %
                     ec.message());
@@ -165,15 +123,6 @@ void Session::handle_session(LoggerInterfacePtr &logger,
 
   if (!enable_ssl) {
     (*tcp_stream_).socket().shutdown(tcp::socket::shutdown_send, ec);
-  }
-}
-
-void Session::clear_serializer() {
-  if (string_serializer_.has_value()) {
-    string_serializer_ = boost::none;
-  }
-  if (file_serializer_.has_value()) {
-    file_serializer_ = boost::none;
   }
 }
 
