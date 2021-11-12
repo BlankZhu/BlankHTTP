@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/beast/http/serializer.hpp>
+#include <boost/beast/http/write.hpp>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -26,10 +28,6 @@ using tcp = boost::asio::ip::tcp;
 
 using Request = http::request<http::string_body /*, Allocator */>;
 using Parser = http::request_parser<http::string_body /*, Allocator */>;
-using StringSerializer =
-    http::response_serializer<http::string_body /*, Allocator */>;
-using FileSerializer =
-    http::response_serializer<http::file_body /*, Allocator */>;
 
 class Session {
  public:
@@ -63,7 +61,20 @@ class Session {
                            LoggerInterfacePtr logger, net::yield_context yield);
   void write_response(Response &resp, int http_version, bool enable_ssl,
                       net::yield_context yield, beast::error_code &ec);
-  void clear_serializer();
+  template <class BodyT>
+  void _write_response(http::response<BodyT> &resp, int http_version,
+                       bool enable_ssl, net::yield_context yield,
+                       beast::error_code &ec) {
+    resp.prepare_payload();
+    http::response_serializer<BodyT> serializer{resp};
+    reset_expire_time();
+
+    if (enable_ssl) {
+      http::async_write(*ssl_stream_, serializer, yield[ec]);
+    } else {
+      http::async_write(*tcp_stream_, serializer, yield[ec]);
+    }
+  }
 
  private:
   boost::optional<beast::tcp_stream> tcp_stream_;
@@ -75,8 +86,6 @@ class Session {
   const std::uint64_t request_body_limit_;
   boost::optional<Parser> parser_;
   beast::flat_buffer buffer_;
-  boost::optional<StringSerializer> string_serializer_;
-  boost::optional<FileSerializer> file_serializer_;
 };
 
 }  // namespace blank
