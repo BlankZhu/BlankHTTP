@@ -20,7 +20,6 @@ add_library(blankhttp SHARED
 set (BLANK_HTTP_HEADERS
     AsyncLogger.h
     Client.hpp
-    ClientSSL.hpp
     Config.h
     Constant.h
     Context.h
