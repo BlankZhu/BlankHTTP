@@ -1,16 +1,18 @@
 #pragma once
 
-#include <boost/asio/io_context.hpp>
 #include <fstream>
+#include <functional>
 #include <string>
 #include <thread>
 #include <unordered_map>
 
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/ssl.hpp>
+#include <boost/thread.hpp>
 
 #include "AsyncLogger.h"
 #include "Config.h"

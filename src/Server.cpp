@@ -1,8 +1,4 @@
 #include "Server.h"
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/spawn.hpp>
-#include <functional>
-#include "Session.h"
 
 namespace blank {
 void Server::init(LoggerType type) {
@@ -34,7 +30,6 @@ void Server::run(net::io_context &ioc) {
   net::spawn(ioc, std::bind(&Server::listen, this, std::ref(ioc), ep,
                             std::placeholders::_1));
 
-  std::vector<std::thread> threads;
   std::function<void(net::io_context &)> ioc_run_func;
   std::function<void(net::io_context &)> ioc_block = [](net::io_context &ioc) {
     ioc.run();
@@ -51,10 +46,11 @@ void Server::run(net::io_context &ioc) {
     ioc_run_func = ioc_block;
   }
 
-  for (auto i = 0; i < conf_.get_threads() - 1; i += 1) {
-    threads.emplace_back([&ioc, &ioc_run_func]() { ioc_run_func(ioc); });
+  boost::thread_group tg{};
+  for (unsigned int i = 0; i < conf_.get_threads(); i += 1) {
+    tg.create_thread([&ioc, &ioc_run_func]() { ioc_run_func(ioc); });
   }
-  ioc_run_func(ioc);
+  tg.join_all();
 }
 
 void Server::register_handler(const std::string &path, const http::verb &method,
