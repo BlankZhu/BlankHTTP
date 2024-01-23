@@ -1,7 +1,7 @@
 #include "Utility.h"
 #include <cstdint>
 
-namespace blank {
+namespace boat {
 std::string percent_encode(std::string_view to_encode) {
   std::stringstream res;
 

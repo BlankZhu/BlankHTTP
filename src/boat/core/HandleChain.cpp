@@ -1,4 +1,4 @@
-#include "HandleChain.h"
+#include "../HandleChain.h"
 
 namespace blank {
 HandleChain::HandleChain() : HandleChain(std::make_shared<Handler>(), true) {}
