@@ -1,60 +1,57 @@
-#pragma once
+#ifndef BOAT_CORE_CONTEXT_H
+#define BOAT_CORE_CONTEXT_H
 
 #include <any>
 #include <memory>
-#include <string>
-#include <unordered_map>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/url.hpp>
 
-#include "LoggerInterface.h"
-#include "RequestTarget.h"
+#include <boat/log/LoggerInterface.h>
 
-namespace blank {
-namespace net = boost::asio;
-namespace http = boost::beast::http;
-using tcp = boost::asio::ip::tcp;
-using Param =
-    std::unordered_map<std::string, std::string>;  // maybe from std::string to
-                                                   // boost::string_view
+namespace boat {
 
 class Context {
  public:
-  Context(tcp::endpoint endpoint, RequestTargetPtr target,
-          const http::verb &method, net::any_io_executor executor,
-          net::yield_context &yield, LoggerInterfacePtr &logger)
-      : remote_endpoint_(endpoint),
-        request_target_(target),
+  Context(boost::asio::ip::tcp::endpoint endpoint, boost::url url,
+          const boost::beast::http::verb &method,
+          boost::asio::any_io_executor &executor,
+          boost::asio::yield_context &yield,
+          boat::log::LoggerInterfacePtr &logger)
+      : remote_endpoint_(std::move(endpoint)),
+        url_(std::move(url)),
         request_method_(method),
         executor_(executor),
         yield_(yield),
         logger(logger) {}
   ~Context() = default;
 
- public:
-  std::any get_shared_data() const;
+  [[nodiscard]] std::any get_shared_data() const;
+  // please use shared_ptr or other easy-copy type
   void set_shared_data(const std::any &data);
-  std::string get_param(const std::string &key) const;
-  void set_param(const std::string &key, const std::string &value);
-  const RequestTargetPtr get_request_target() const;
-  http::verb get_request_method() const;
-  net::any_io_executor get_executor();
-  net::yield_context &get_yield_context();
+  [[nodiscard]] std::optional<std::string> get_param(const std::string& key) const;
+  void set_param(const std::string& key, const std::string& value);
+  [[nodiscard]] boost::url get_url() const;
+  [[nodiscard]] boost::beast::http::verb get_request_method() const;
+  [[nodiscard]] boost::asio::any_io_executor &get_executor() const;
+  [[nodiscard]] boost::asio::yield_context &get_yield_context() const;
 
  private:
   std::any shared_data_;
-  Param param_;
-  tcp::endpoint remote_endpoint_;
-  const RequestTargetPtr request_target_;
-  http::verb request_method_;
-  net::any_io_executor executor_;
-  net::yield_context &yield_;
+  std::unordered_map<std::string, std::string> param_;
+  boost::asio::ip::tcp::endpoint remote_endpoint_;
+  boost::url url_;
+  boost::beast::http::verb request_method_;
+  boost::asio::any_io_executor &executor_;
+  boost::asio::yield_context &yield_;
 
  public:
-  LoggerInterfacePtr &logger;
+  boat::log::LoggerInterfacePtr &logger;
 };
 
 using ContextPtr = std::shared_ptr<Context>;
-}  // namespace blank
+}  // namespace boat
+
+#endif

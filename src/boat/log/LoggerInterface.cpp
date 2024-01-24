@@ -1,3 +1,3 @@
-//
-// Created by 70731 on 2024/1/21.
-//
+#include <boat/log/LoggerInterface.h>
+
+boat::log::LoggerInterface::~LoggerInterface() = default;

@@ -1,1 +1,3 @@
-add_executable(demo.cpp)
+add_executable(demo demo.cpp)
+
+target_link_libraries(demo PRIVATE boat)

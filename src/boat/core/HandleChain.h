@@ -1,29 +1,30 @@
-#pragma once
+#ifndef BOAT_CORE_HANDLECHAIN_H
+#define BOAT_CORE_HANDLECHAIN_H
 
 #include <memory>
 #include <vector>
 
-#include "Context.h"
-#include "DefaultMiddleware.h"
-#include "Handler.h"
-#include "Middleware.h"
-#include "Response.h"
+#include <boat/core/Handler.h>
+#include <boat/core/Middleware.h>
 
-namespace blank {
-class HandleChain : public Handler {
+namespace boat {
+
+class HandleChain final : public Handler {
  public:
   HandleChain();
-  HandleChain(HandlerPtr handler, bool use_default = true);
+  explicit HandleChain(HandlerPtr handler, bool use_default = true);
   HandleChain(std::vector<MiddlewarePtr> middlewares, HandlerPtr handler,
               bool use_default = true);
-  virtual ~HandleChain() = default;
+  ~HandleChain() override = default;
 
- public:
-  virtual Response handle_request(ContextPtr context, Request &&request);
+  Response handle_request(ContextPtr context, Request &&request) override;
 
  private:
   HandlerPtr handler_;
   std::vector<MiddlewarePtr> middlewares_;
 };
 using HandleChainPtr = std::shared_ptr<HandleChain>;
-}  // namespace blank
+
+}  // namespace boat
+
+#endif

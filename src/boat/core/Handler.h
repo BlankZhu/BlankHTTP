@@ -1,29 +1,24 @@
-#pragma once
+#ifndef BOAT_CORE_HANDLER_H
+#define BOAT_CORE_HANDLER_H
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
+#include <boat/core/Context.h>
+#include <boat/core/Response.h>
+#include <boat/core/Request.h>
 
-#include "Constant.h"
-#include "Context.h"
-#include "Response.h"
-
-namespace blank {
-namespace beast = boost::beast;
-namespace http = boost::beast::http;
-
-using Request = http::request<http::string_body>;
+namespace boat {
 
 class Handler {
  public:
   Handler() = default;
   virtual ~Handler() = default;
 
- public:
   virtual Response handle_request(ContextPtr ctx, Request &&req);
 
  private:
-  Response base_not_found(ContextPtr ctx, Request &&req);
+  static Response base_not_found(const ContextPtr& ctx, Request &&req);
 };
 
 using HandlerPtr = std::shared_ptr<Handler>;
 }  // namespace blank
+
+#endif

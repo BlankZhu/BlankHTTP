@@ -1,29 +1,33 @@
-#include "../HandleChain.h"
+#include <boat/core/HandleChain.h>
 
-namespace blank {
+#include <utility>
+
+namespace boat {
+
 HandleChain::HandleChain() : HandleChain(std::make_shared<Handler>(), true) {}
 
-HandleChain::HandleChain(HandlerPtr handler, bool use_default) : Handler() {
-  handler_ = handler;
+HandleChain::HandleChain(HandlerPtr handler, const bool use_default)
+    : Handler() {
+  handler_ = std::move(handler);
   if (use_default) {
-    auto default_middleware = std::make_shared<DefaultMiddleware>();
+    const auto default_middleware = std::make_shared<DefaultMiddleware>();
     default_middleware->set_next(handler_);
     middlewares_.push_back(default_middleware);
   }
 }
 
 HandleChain::HandleChain(std::vector<MiddlewarePtr> middlewares,
-                         HandlerPtr handler, bool use_default)
+                         HandlerPtr handler, const bool use_default)
     : Handler() {
   if (use_default) {
-    auto default_middleware = std::make_shared<DefaultMiddleware>();
+    const auto default_middleware = std::make_shared<DefaultMiddleware>();
     middlewares_.push_back(default_middleware);
   }
 
   middlewares_.reserve(middlewares_.size() + 1);
   middlewares_.insert(middlewares_.end(), middlewares.begin(),
                       middlewares.end());
-  handler_ = handler;
+  handler_ = std::move(handler);
 
   // chain middlewares together
   auto p1 = middlewares_.begin() + 1;
@@ -40,10 +44,11 @@ HandleChain::HandleChain(std::vector<MiddlewarePtr> middlewares,
   (*p2)->set_next(handler_);
 }
 
-Response HandleChain::handle_request(ContextPtr context, Request &&request) {
+Response HandleChain::handle_request(const ContextPtr context, Request &&request) {
   if (middlewares_.empty()) {
     return handler_->handle_request(context, std::move(request));
   }
   return middlewares_.front()->handle_request(context, std::move(request));
 }
-}  // namespace blank
+
+}  // namespace boat

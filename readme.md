@@ -1,27 +1,21 @@
-# BlankHTTP
+# Boat
 
-BlankHTTP is a simple HTTP application framework that bases on Boost. 
-
-
+Boat is a simple HTTP application framework that bases on Boost.
 
 ## Features
 
-- Based on Boost.Beast.
+- Based on Boost.
 - HTTP routing table.
 - User-defined HTTP handlers.
 - User-defined HTTP middlewares.
 - Fully asynchronous.
 
-
-
 ## Requirement
 
-- Boost 1.75+ with JSON, LOG module compiled.
+- Boost 1.80+
 - OpenSSL 1.0+
-- CMake 3.10+
-- C++ 17
-
-
+- CMake 3.20+
+- C++ 20
 
 ## Get Started
 
@@ -30,8 +24,8 @@ BlankHTTP is a simple HTTP application framework that bases on Boost.
 Here comes a HelloWorld:
 
 ```c++
-#include <blankhttp/Config.h>
-#include <blankhttp/Server.h>
+#include <boat/Config.h>
+#include <boat/Server.h>
 
 class HelloWorldHandler : public blank::Handler {
 public:
@@ -84,7 +78,7 @@ And get:
 
 ```shell
 HTTP/1.1 200 OK
-Server: BlankHTTP
+Server: Boat
 Content-Type: text/plain
 Content-Length: 12
 
@@ -107,8 +101,8 @@ That's it!
 Like the `HelloWorldHandler` we has defined in the previous section, it is easy to defined another one in the same pattern:
 
 ```cpp
-#include <blankhttp/Handler.h>
-#include <blankhttp/Response.h>
+#include <boat/Handler.h>
+#include <boat/Response.h>
 
 class EchoHandler : public blank::Handler {
 public:
@@ -147,7 +141,7 @@ The repeater says:
 
 ```shell
 HTTP/1.1 200 OK
-Server: BlankHTTP
+Server: Boat
 Content-Type: text/plain
 Content-Length: 15
 
@@ -160,7 +154,7 @@ Done!
 
 ### Wildcard Mapping
 
-Yep, BlankHTTP allows wildcard mapping. For example, there is a API path designed as:
+Yep, Boat allows wildcard mapping. For example, there is a API path designed as:
 
 ```reStructuredText
 /hello/[DEPARTMENT]/[USER]
@@ -213,7 +207,7 @@ Will get:
 
 ```shell
 HTTP/1.1 200 OK
-Server: BlankHTTP
+Server: Boat
 Content-Type: text/plain
 Content-Length: 20
 
@@ -270,7 +264,7 @@ Request related details will be printed:
 
 ```shell
 HTTP/1.1 200 OK
-Server: BlankHTTP
+Server: Boat
 Content-Type: text/plain
 Content-Length: 64
 
@@ -331,7 +325,7 @@ Will get:
 
 ```shell
 HTTP/1.1 200 OK
-Server: BlankHTTP
+Server: Boat
 Content-Type: text/plain
 Content-Length: 24
 
@@ -379,7 +373,7 @@ SharedDataGetterMiddleware::handle_request(blank::ContextPtr ctx,
 
 ### HTTP Client
 
-The BlankHTTP also contains a HTTP client:
+The Boat also contains a HTTP client:
 
 ```c++
 blank::Response BoostHandler::handle_request(blank::ContextPtr ctx,
@@ -412,7 +406,7 @@ Just do it in the Beast way.
 
 ### Logging
 
-The BlankHTTP use Boost.Log as logging module. By default, the BlankHTTP `Server` initialized with an asynchronous logger, and passes the logger to all `Context`.
+The Boat use Boost.Log as logging module. By default, the Boat `Server` initialized with an asynchronous logger, and passes the logger to all `Context`.
 
 Besides, a default middleware is wrapped with all `Handler` and `HandleChain`.
 
@@ -435,10 +429,10 @@ However, by now, you can't disable the logging when 404 not found.
 
 ## Build & Install
 
-To build & install BlankHTTP, take the following steps:
+To build & install Boat, take the following steps:
 
 ```shell
-cd BlankHTTP/
+cd Boat/
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/where/to/install -DCMAKE_BUILD_TYPE=Release ..

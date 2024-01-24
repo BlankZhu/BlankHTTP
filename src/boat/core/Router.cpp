@@ -1,15 +1,21 @@
-#include "Router.h"
+#include <boat/core/Router.h>
 
-namespace blank {
-void Router::add_handler(const std::string &path, const http::verb &method,
-                         HandlerPtr handler) {
+#include <utility>
+
+#include <boost/algorithm/string.hpp>
+
+namespace boat {
+
+void Router::add_handler(const std::string &path,
+                         const boost::beast::http::verb &method,
+                         HandlerPtr handler) const {
   auto tmp_path = add_leading_slash(path);
   std::vector<std::string> pieces{};
   boost::split(pieces, tmp_path, boost::is_any_of("/"));
 
   auto curr = root_;
   for (const auto &piece : pieces) {
-    if (piece.length() == 0) {
+    if (piece.empty()) {
       continue;
     }
 
@@ -36,24 +42,22 @@ void Router::add_handler(const std::string &path, const http::verb &method,
   }
 
   // handle tailling slash here
-  if (pieces.back().length() == 0) {
+  if (pieces.back().empty()) {
     auto tail_node = std::make_shared<RouteNode>();
     curr->node_map.insert_or_assign("", tail_node);
     curr = tail_node;
   }
 
-  int method_int = static_cast<int>(method);
-  curr->handler_map[method_int] = handler;
+  const int method_int = static_cast<int>(method);
+  curr->handler_map[method_int] = std::move(handler);
 }
 
-HandlerPtr Router::get_handler(ContextPtr context) const {
-  auto tmp_path =
-      add_leading_slash(context->get_request_target()->get_path().to_string());
-  boost::string_view tmp_sv{tmp_path};
-  std::vector<boost::string_view> pieces{};
-  split_sv(pieces, tmp_sv, "/");
+HandlerPtr Router::get_handler(const ContextPtr &context) const {
+  const auto tmp_path = add_leading_slash(context->get_url().path());
+  std::vector<std::string_view> pieces{};
+  boost::split(pieces, tmp_path, boost::is_any_of("/"));
 
-  auto curr = root_;
+  const auto curr = root_;
   auto ret = dfs_get_handler_helper(context, pieces, 0, curr);
   if (ret == nullptr) {
     ret = std::make_shared<Handler>();
@@ -62,9 +66,9 @@ HandlerPtr Router::get_handler(ContextPtr context) const {
 }
 
 HandlerPtr Router::dfs_get_handler_helper(
-    ContextPtr context, const std::vector<boost::string_view> &pieces,
-    std::size_t index, RouteNodePtr curr_node) const {
-  while (pieces[index].length() == 0 &&
+    const ContextPtr& context, const std::vector<std::string_view> &pieces,
+    std::size_t index, const RouteNodePtr& curr_node) const {
+  while (pieces[index].empty() &&
          index < pieces.size() -
                      1)  // skip till the last elem (splited by tailing slash)
   {
@@ -72,8 +76,8 @@ HandlerPtr Router::dfs_get_handler_helper(
   }
   if (index >= pieces.size()) {
     // return curr_node->handler;
-    auto method_int = static_cast<int>(context->get_request_method());
-    auto ret = curr_node->handler_map.find(method_int);
+    const auto method_int = static_cast<int>(context->get_request_method());
+    const auto ret = curr_node->handler_map.find(method_int);
     if (ret == curr_node->handler_map.end()) {
       return nullptr;
     }
@@ -82,19 +86,19 @@ HandlerPtr Router::dfs_get_handler_helper(
 
   const auto &piece = pieces[index];
   // check if match plain text
-  auto found = curr_node->node_map.find(piece.to_string());
+  auto found = curr_node->node_map.find(std::string{piece});
   if (found != curr_node->node_map.end()) {
     return dfs_get_handler_helper(context, pieces, index + 1, found->second);
   }
 
   // if current piece is not an empty string, check if match wildcard
-  if (pieces[index].length() != 0) {
+  if (!pieces[index].empty()) {
     found = curr_node->node_map.find(":");
     if (found != curr_node->node_map.end()) {
       auto ret =
           dfs_get_handler_helper(context, pieces, index + 1, found->second);
       if (ret != nullptr) {
-        context->set_param(found->second->wildcard, piece.to_string());
+        context->set_param(found->second->wildcard, std::string{piece});
       }
       return ret;
     }
@@ -104,11 +108,11 @@ HandlerPtr Router::dfs_get_handler_helper(
   return nullptr;
 }
 
-std::string Router::add_leading_slash(const std::string &path) const {
+std::string Router::add_leading_slash(const std::string &path) {
   if (!path.empty() && path[0] != '/') {
     return "/" + path;
   }
   return path;
 }
 
-}  // namespace blank
+}  // namespace boat

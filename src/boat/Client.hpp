@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOAT_CLIENT_H
+#define BOAT_CLIENT_H
 
 #include <cstdint>
 
@@ -186,3 +187,5 @@ class Client : public std::enable_shared_from_this<Client> {
 };
 
 }  // namespace boat
+
+#endif

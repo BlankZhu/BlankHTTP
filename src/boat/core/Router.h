@@ -1,37 +1,37 @@
-#pragma once
+#ifndef BOAT_CORE_ROUTER_H
+#define BOAT_CORE_ROUTER_H
 
-#include <boost/utility/string_view_fwd.hpp>
 #include <memory>
 
 #include <boost/beast/http.hpp>
 
-#include "Context.h"
-#include "HandleChain.h"
-#include "Handler.h"
-#include "RouteNode.h"
+#include <boat/core/Context.h>
+#include <boat/core/Handler.h>
+#include <boat/core/RouteNode.h>
 
-namespace blank {
-namespace http = boost::beast::http;
+namespace boat {
 
 class Router {
  public:
   Router() : root_(std::make_shared<RouteNode>()){};
   ~Router() = default;
 
- public:
-  void add_handler(const std::string &path, const http::verb &method,
-                   HandlerPtr handler);
-  HandlerPtr get_handler(ContextPtr context) const;
+  void add_handler(const std::string &path,
+                   const boost::beast::http::verb &method,
+                   HandlerPtr handler) const;
+  [[nodiscard]] HandlerPtr get_handler(const ContextPtr& context) const;
 
  private:
-  HandlerPtr dfs_get_handler_helper(
-      ContextPtr ctx, const std::vector<boost::string_view> &pieces,
-      std::size_t index, RouteNodePtr curr_node) const;
-  std::string add_leading_slash(const std::string &path) const;
+  [[nodiscard]] HandlerPtr dfs_get_handler_helper(
+      const ContextPtr& context, const std::vector<std::string_view> &pieces,
+      std::size_t index, const RouteNodePtr& curr_node) const;
+  [[nodiscard]] static std::string add_leading_slash(const std::string &path);
 
- private:
   RouteNodePtr root_;
 };
 
 using RouterPtr = std::shared_ptr<Router>;
-}  // namespace blank
+
+}  // namespace boat
+
+#endif

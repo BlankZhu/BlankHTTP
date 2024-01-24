@@ -1,7 +1,7 @@
-#include "Response.h"
-#include <boost/optional/optional_fwd.hpp>
+#include <boat/core/Response.h>
 
-namespace blank {
+namespace boat {
+
 Response::Response(StringResponse&& response) {
   string_response_.emplace(std::move(response));
 }
@@ -10,7 +10,7 @@ Response::Response(FileResponse&& response) {
   file_response_.emplace(std::move(response));
 }
 
-Response::Response(Response&& response) {
+Response::Response(Response&& response) noexcept {
   string_response_ = std::move(response.string_response_);
   file_response_ = std::move(response.file_response_);
   // no need to move serializers
@@ -23,25 +23,26 @@ unsigned Response::get_status_code() const {
   if (file_response_.has_value()) {
     return file_response_->result_int();
   }
-  return static_cast<unsigned>(http::status::internal_server_error);
+  return static_cast<unsigned>(
+      boost::beast::http::status::internal_server_error);
 }
 
 void Response::set_string_response(StringResponse&& response) {
   string_response_.emplace(std::move(response));
-  file_response_ = boost::none;
+  file_response_ = std::nullopt;
 }
 
 void Response::set_file_response(FileResponse&& response) {
   file_response_.emplace(std::move(response));
-  string_response_ = boost::none;
+  string_response_ = std::nullopt;
 }
 
-boost::optional<StringResponse>& Response::get_string_response_ref() {
-  return string_response_;
+std::optional<StringResponse>& Response::get_string_response_ref() {
+  return std::ref(string_response_);
 }
 
-boost::optional<FileResponse>& Response::get_file_response_ref() {
-  return file_response_;
+std::optional<FileResponse>& Response::get_file_response_ref() {
+  return std::ref(file_response_);
 }
 
 bool Response::is_string_response() const {
@@ -59,4 +60,5 @@ bool Response::need_eof() const {
   }
   return false;
 }
-}  // namespace blank
+
+}  // namespace boat

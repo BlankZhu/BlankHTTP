@@ -1,37 +1,33 @@
-#pragma once
+#ifndef BOAT_CONFIG_H
+#define BOAT_CONFIG_H
 
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <sstream>
 #include <string>
-#include <thread>
 
-#include <boost/json.hpp>
+namespace boat {
 
-#include "Constant.h"
-
-namespace blank {
 class Config {
  public:
   Config() = default;
   ~Config() = default;
-  std::string detail_in_json() const;
 
- public:
+  [[nodiscard]] std::string detail_in_json() const;
+
   // getters & setters
-  int get_log_level() const;
-  unsigned int get_threads() const;
-  std::string get_address() const;
-  unsigned short get_port() const;
-  unsigned int get_timeout() const;
-  std::string get_log_filename() const;
-  bool get_enable_ssl() const;
-  std::string get_cert_path() const;
-  std::string get_pri_key_path() const;
-  std::uint32_t get_request_header_limit() const;
-  std::uint64_t get_request_body_limit() const;
-  bool get_enable_spin() const;
+  [[nodiscard]] int get_log_level() const;
+  [[nodiscard]] unsigned int get_threads() const;
+  [[nodiscard]] std::string get_address() const;
+  [[nodiscard]] unsigned short get_port() const;
+  [[nodiscard]] unsigned int get_timeout() const;
+  [[nodiscard]] std::string get_log_filename() const;
+  [[nodiscard]] bool get_enable_ssl() const;
+  [[nodiscard]] std::string get_cert_path() const;
+  [[nodiscard]] std::string get_pri_key_path() const;
+  [[nodiscard]] std::uint32_t get_request_header_limit() const;
+  [[nodiscard]] std::uint64_t get_request_body_limit() const;
+  [[nodiscard]] bool get_enable_spin() const;
 
   void set_log_level(int log_level);
   void set_threads(unsigned int threads);
@@ -64,3 +60,5 @@ class Config {
 using ConfigPtr = std::shared_ptr<Config>;
 
 }  // namespace blank
+
+#endif

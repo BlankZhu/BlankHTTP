@@ -1,27 +1,39 @@
-#pragma once
+#ifndef BOAT_CORE_MIDDLEWARE_H
+#define BOAT_CORE_MIDDLEWARE_H
 
 #include <memory>
 
-#include "Handler.h"
-#include "Response.h"
+#include <boat/core/Handler.h>
 
-namespace blank {
+namespace boat {
+
 class Middleware;
-using MiddlewarePtr = std::shared_ptr<Middleware>;
 
 class Middleware : public Handler {
  public:
   Middleware() : Handler(), next_(nullptr){};
-  virtual ~Middleware() = default;
+  ~Middleware() override = default;
 
- public:
-  virtual Response handle_request(ContextPtr ctx, Request &&req);
-  void set_next(HandlerPtr next);
+  Response handle_request(ContextPtr ctx, Request &&req) override;
+  void set_next(const HandlerPtr &next);
 
  protected:
-  Response next(ContextPtr ctx, Request &&req);
+  Response next(const ContextPtr &ctx, Request &&req) const;
 
  private:
   HandlerPtr next_;
 };
-}  // namespace blank
+using MiddlewarePtr = std::shared_ptr<Middleware>;
+
+class DefaultMiddleware final : public Middleware {
+ public:
+  DefaultMiddleware() : Middleware() {}
+  ~DefaultMiddleware() override = default;
+
+ public:
+  Response handle_request(ContextPtr ctx, Request &&req) override;
+};
+
+}  // namespace boat
+
+#endif

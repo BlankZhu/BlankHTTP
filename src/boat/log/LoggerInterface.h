@@ -1,69 +1,70 @@
-#pragma once
+#ifndef BOAT_LOG_LOGGERINTERFACE_H
+#define BOAT_LOG_LOGGERINTERFACE_H
 
-#define BOOST_LOG_DYN_LINK 1
+#include <optional>
 
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/format.hpp>
-#include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks.hpp>
-#include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-#include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/trivial.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/utility/setup/console.hpp>
-#include <boost/log/utility/setup/file.hpp>
 
-namespace blank {
-namespace logging = boost::log;
-namespace trivial = boost::log::trivial;
-namespace src = boost::log::sources;
-namespace sinks = boost::log::sinks;
-namespace keywords = boost::log::keywords;
-namespace attrs = boost::log::attributes;
-namespace expr = boost::log::expressions;
-using fmt = boost::format;
+namespace boat::log {
 
 class LoggerInterface {
  public:
-  virtual void init(int log_level = 0,
-                    const std::string &log_filename = "") = 0;
-  void trace(const fmt &formatted) { do_logging(formatted, trivial::trace); }
-  void debug(const fmt &formatted) { do_logging(formatted, trivial::debug); }
-  void info(const fmt &formatted) { do_logging(formatted, trivial::info); }
-  void warning(const fmt &formatted) {
-    do_logging(formatted, trivial::warning);
+  virtual ~LoggerInterface();
+
+  virtual void Init(int log_level, std::optional<std::string> log_filename) = 0;
+  void Trace(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::trace);
   }
-  void error(const fmt &formatted) { do_logging(formatted, trivial::error); }
-  void fatal(const fmt &formatted) { do_logging(formatted, trivial::fatal); }
+  void Debug(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::debug);
+  }
+  void Info(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::info);
+  }
+  void Warning(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::warning);
+  }
+  void Error(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::error);
+  }
+  void Fatal(const boost::format &formatted) {
+    do_logging(formatted, boost::log::trivial::fatal);
+  }
 
  protected:
   virtual void set_os_log() = 0;
   virtual void set_file_log(const std::string &log_filename) = 0;
-  virtual void do_logging(const fmt &formatted,
-                          trivial::severity_level level) = 0;
-  trivial::severity_level parse_severity_level(int level) {
+  virtual void do_logging(const boost::format &formatted,
+                          boost::log::trivial::severity_level level) = 0;
+  static boost::log::trivial::severity_level parse_severity_level(
+      const int level) {
     if (level <= 0) {
-      return trivial::trace;
+      return boost::log::trivial::trace;
     }
     if (level == 1) {
-      return trivial::debug;
+      return boost::log::trivial::debug;
     }
     if (level == 2) {
-      return trivial::info;
+      return boost::log::trivial::info;
     }
     if (level == 3) {
-      return trivial::warning;
+      return boost::log::trivial::warning;
     }
     if (level == 4) {
-      return trivial::error;
+      return boost::log::trivial::error;
     }
-    return trivial::fatal;
+    return boost::log::trivial::fatal;
   }
 };
 using LoggerInterfacePtr = std::shared_ptr<LoggerInterface>;
 
 enum LoggerType { Async, Sync };
-}  // namespace blank
+
+}  // namespace boat::log
+
+#endif
